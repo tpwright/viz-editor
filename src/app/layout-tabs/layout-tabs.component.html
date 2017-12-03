@@ -1,16 +1,25 @@
-<mat-tab-group class="layout-tabs-group">
-  <mat-tab
-    *ngFor="let page of layoutPages">
-      <ng-template mat-tab-label>
-        <div class='layout-tab-label'>
-          <span class='layout-tab-label-text'> {{page.id}} </span>
-          <a class='layout-tab-label-button'>
-            <mat-icon class='layout-tab-label-icon'>delete_forever</mat-icon>
-          </a>
-        </div>
-      </ng-template>
+<mat-tab-group class="demo-tab-group"
+       [(selectedIndex)]="selectedTabIndex"
+       (selectedTabChange)="onSelectedTabChanged($event)">
+  <mat-tab *ngFor="let tab of layoutPages; let ix = index"  label="Tab {{tab.id}}">
+    <ng-template mat-tab-label>
+      <div class='layout-tab-label'>
+      <span class='layout-tab-label-text'> Page {{tab.id}} </span>
+      <button class='layout-tab-label-button'
+              *ngIf="ix == selectedTabIndex"
+              (click)="deleteTab()">
+        <mat-icon class='layout-tab-label-icon'>delete_forever</mat-icon>
+      </button>
+      </div>
+    </ng-template>
+
     <div class="layout-tab-content">
-      Content for '{{page.id}}'
+      Content for 'Page {{tab.id}}':
+      <ul>
+      <li>selectedTabIndex = {{selectedTabIndex}}</li>
+      <li>selectedLayoutPage.id = {{selectedLayoutPage.id}}</li>
+      <li>selectedTabPageId = {{selectedTabPageId}}</li>
+      </ul>
     </div>
   </mat-tab>
 </mat-tab-group>

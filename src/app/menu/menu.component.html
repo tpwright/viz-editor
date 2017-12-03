@@ -1,1 +1,7 @@
-<p>Menu bar goes here.</p>
+<div class='menu-bar'>
+  <button class='menu-button' *ngFor="let item of mainMenu"
+          (click)=menuDispatch(item)>
+          {{ item.label }}
+  </button>
+</div>
+

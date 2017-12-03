@@ -1,3 +1,5 @@
+@import '../globals/styles/_colors';
+  
 .status-bar-items {
     display: flex;
     flex-direction: row;
@@ -21,5 +23,10 @@
 
 .status-item-value {
     flex: 1;
+    text-align: center;
+}
+
+.date-time {
+    margin-left: auto;
     text-align: center;
 }

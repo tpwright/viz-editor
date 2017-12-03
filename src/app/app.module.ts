@@ -1,11 +1,12 @@
 import { BrowserModule }            from '@angular/platform-browser';
 import { NgModule }                 from '@angular/core';
 import { BrowserAnimationsModule }  from '@angular/platform-browser/animations';
-import { MatTabsModule }            from '@angular/material';
+import { MatTabsModule }            from '@angular/material/tabs';
 import { MatIconModule }            from '@angular/material/icon';
 
 import { AppComponent }             from './app.component';
 import { MenuComponent }            from './menu/menu.component';
+import { LayoutPageService }        from './layout-page.service';
 import { LayoutTabsComponent }      from './layout-tabs/layout-tabs.component';
 import { StatusItemListComponent }  from './status-item-list/status-item-list.component';
 
@@ -22,7 +23,7 @@ import { StatusItemListComponent }  from './status-item-list/status-item-list.co
     BrowserAnimationsModule,
     MatIconModule,
   ],
-  providers: [],
+  providers: [ LayoutPageService ],
   bootstrap: [AppComponent]
 })
 

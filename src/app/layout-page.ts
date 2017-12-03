@@ -1,3 +1,4 @@
 export interface LayoutPage {
-    id: string;
+    id: number;
+    value: number;
 }

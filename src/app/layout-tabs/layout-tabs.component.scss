@@ -1,0 +1,41 @@
+@import '../globals/styles/_colors';
+
+.layout-tabs-group {
+  border: 1px solid #a10303;
+}
+
+.layout-tab-label {
+  display: inline-block;
+  flex-direction: row;
+  align-items: middle;
+}
+
+.layout-tab-label-text {
+  vertical-align: middle;
+}
+
+.layout-tab-label-button {
+  border: 0;
+  margin: 5px 0;
+  padding: 0;
+  background: lightgray;
+  vertical-align: middle;
+}
+
+.layout-tab-label-icon {
+  color: red;
+}
+
+.layout-tab-content {
+  padding: 5px;
+}
+
+.layout-tab-svg {
+  margin: 5px;
+  height: 400px;
+  width: 1000px;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 6px;
+  border-color: $borderColor;
+}

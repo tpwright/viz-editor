@@ -1,13 +1,6 @@
-<div class='full-page'>
-  <div class='menu-bar'>
-    <app-menu></app-menu>
-  </div>
-
-  <div class='layout-tabs'>
-    <app-layout-tabs></app-layout-tabs>
-  </div>
-
-  <div class='status-bar'>
-      <app-status-item-list></app-status-item-list> 
-  </div>
+<div class='full-page'
+     (keydown)="checkForHotKey($event)">
+  <app-menu class=top-menu></app-menu>
+  <app-layout-tabs class='layout-tabs'></app-layout-tabs>
+  <app-status-item-list class=status-bar></app-status-item-list>
 </div>

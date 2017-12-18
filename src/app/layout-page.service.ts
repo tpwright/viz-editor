@@ -1,84 +1,135 @@
-import { Injectable } from '@angular/core';
-import { LayoutPage } from "./layout-page";
+import { Injectable }       from '@angular/core';
+import { Observable }       from 'rxjs/Observable';
+import { BehaviorSubject }  from 'rxjs/BehaviorSubject';
+import { map }              from 'rxjs/operators';
+import { LayoutPage }       from "./layout-page";
 
 @Injectable()
 export class LayoutPageService {
 
-  constructor() { }
+  private _dataStore      :LayoutPage[];
+  private defLayoutPages  :LayoutPage[] = [ { id: 0, value: 0 },
+                                            { id: 1, value: 0 },
+                                            { id: 2, value: 0 },
+                                            { id: 3, value: 0 },
+                                            { id: 4, value: 0 }, ];
+  private _layoutPages$   :BehaviorSubject<LayoutPage[]>; 
 
-  layoutPages :LayoutPage[] = [
-    { id: 0, value: 0 },
-    { id: 1, value: 0 },
-    { id: 2, value: 0 },
-    { id: 3, value: 0 },
-    { id: 4, value: 0 },   
-  ]
-
-  /*
-   * Append the specified LayoutPage to the list.
-   */
-  public appendLayoutPage(pPage :LayoutPage)
+  constructor()
   {
-    this.layoutPages.push(pPage);
-    console.log("Page '" + pPage.id + "' appended!");
+    this._dataStore = this.copyLayoutPageArray(this.defLayoutPages);
+    // this._layoutPages$ = <BehaviorSubject<LayoutPage[]>>new BehaviorSubject(Object.assign({}, this._dataStore));  
+    this._layoutPages$ = <BehaviorSubject<LayoutPage[]>>new BehaviorSubject(this.copyLayoutPageArray(this._dataStore));  
+    console.log(`LayoutPageService.constructor(): this._dataStore contains '${this._dataStore.length}' items`)  
+  }
+
+  get LayoutPages$() :Observable<LayoutPage[]>
+  {
+    return this._layoutPages$.asObservable();
   }
 
   /*
-   * Delete the specified LayoutPage from the list.
-   * Return: the index of the deleted LayoutPage.
+   * Delete from the LayoutPage array that page whose 'id'
+   * matches that specified.
+   * 
+   * Return: the array index of the deleted LayoutPage or
+   * 'null' if it was not found.
    */
-  public deleteLayoutPage(pPage :LayoutPage): number
+  public deleteLayoutPage(pPageId :number): number
   {
-    var index = this.layoutPages.findIndex(x => x.id == pPage.id);
+    console.log(`LayoutPageService.deleteLayoutPage(): Begins; LayoutPage.id = '${pPageId}'`);
+    var index = this._dataStore.findIndex(x => x.id == pPageId);
     if (index > -1)
     {
-      this.layoutPages.splice(index, 1);
-      console.log("Page '" + pPage.id + "' deleted!");
-
+      this._dataStore.splice(index, 1);
+      this._layoutPages$.next(this.copyLayoutPageArray(this._dataStore));
+      console.log(`LayoutPageService.deleteLayoutPage(): LayoutPage.id = '${pPageId}' deleted`);
+      
       return(index);
     }
     else
     {
-      console.log("Page '" + pPage.id + "' not found; cannot delete!");
-      return(-1);
+      console.log(`LayoutPageService.deleteLayoutPage(): LayoutPage.id = '${pPageId}' not found; cannot delete!`);
+      return(null);
     }
   }
 
   /*
-   *  Return a reference to our list of LayoutPages.
+   * Insert the specified LayoutPage at the position in the list
+   * specified by pIndex, returning the index if the insertion
+   * was successful.
+   * 
+   * Return: the index of the inserted LayoutPage.
    */
-  public getLayoutPages() :LayoutPage[]
+  public insertLayoutPage(pPage :LayoutPage, pIndex :number = 0): number
   {
-    return(this.layoutPages);
+    console.log(`LayoutPageService.insertLayoutPage(): Begins`)
+    this.assignLayoutPageId(pPage);
+    this._dataStore.splice(pIndex, 0, pPage);
+    this._layoutPages$.next(this.copyLayoutPageArray(this._dataStore));
+    console.log(`LayoutPageService.insertLayoutPage(): Ends; '${pPage.id}' inserted at index = ${pIndex}`)
+    
+    return(pIndex);
   }
 
   /*
-   *  Return a LayoutPage.id value suitable for use by a new LayoutPage.
+   * Replace the LayoutPage in the list whose 'id' matches
+   * that of the provided one.
+   * 
+   * Return: the index of the updated LayoutPage or 'null'
+   *         if it was not found.
    */
-  public getNewLayoutPageId() :number
+  public updateLayoutPage(pPage :LayoutPage) :number
   {
-    var lastPageId: number = -1;
-
-    for (var ix = 0; ix < this.layoutPages.length; ix++)
+    var index = this._dataStore.findIndex(x => x.id == pPage.id);
+    if (index > -1)
     {
-      if (this.layoutPages[ix].id > lastPageId)
-      {
-        lastPageId = this.layoutPages[ix].id;
-      }
+      this._dataStore[index] = pPage;
+      this._layoutPages$.next(this.copyLayoutPageArray(this._dataStore));
+      console.log(`LayoutPageService.updateLayoutPage(): LayoutPage.id = '${pPage.id}' updated`);
+      
+      return(index);
     }
-
-    return(lastPageId + 1);
+    else
+    {
+      console.log(`LayoutPageService.updateLayoutPage(): LayoutPage.id = '${pPage.id}' not found; cannot update!`);
+      return(null);
+    }
   }
 
   /*
-   * Insert the specified LayoutPage at the front of the list
-   * and return its index.
+   *  Assign a unique 'id' to the specified LayoutPage,
+   *  but only if it does not already have one.
    */
-  public insertLayoutPage(pPage :LayoutPage, pIndex :Number): number
+  private assignLayoutPageId(pLayoutPage :LayoutPage) :void
   {
-    console.log("Page '" + pPage.id + "' inserted!");
-    this.layoutPages.unshift(pPage);
+    if (pLayoutPage && (pLayoutPage.id == null || pLayoutPage.id == undefined))
+    {
+      let lastPageId: number = -1;
+      
+      for (let ix = 0; ix < this._dataStore.length; ix++)
+      {
+        if (this._dataStore[ix].id > lastPageId)
+        {
+          lastPageId = this._dataStore[ix].id;
+        }
+      }
+      
+      pLayoutPage.id = lastPageId + 1;
+      console.log(`LayoutPageService.assignLayoutPageId(): LayoutPage.id='${pLayoutPage.id} was assigned`);
+    }
+  }
 
-    return(0);
+  private copyLayoutPageArray(pArray :LayoutPage[]) :LayoutPage[]
+  {
+    // return (Object.assign([], pArray));
+    // let content :LayoutPage[] = [];
+    // pArray.forEach(element =>
+    //   {
+    //     content.push( { id: element.id, value: element.value } );
+    //   });
+    // console.log(`LayoutPageService.copyLayoutPageArray(): content.length = '${content.length}`);
+    // return (content);
+    return (pArray);
   }
 }

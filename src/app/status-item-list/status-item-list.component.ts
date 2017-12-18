@@ -15,7 +15,7 @@ export class StatusItemListComponent implements OnInit, OnDestroy {
 
   currentDate :string;
   currentTime :string;
-  intervalId  :number = 0;
+  intervalId  :number;
   
   constructor() { }
 
@@ -42,7 +42,7 @@ export class StatusItemListComponent implements OnInit, OnDestroy {
    * Retrieve the StatusItem whose key matches
    * the specified value.
    */
-  getStatusItemByKey(pKey: string): StatusItem
+  getStatusItemByKey(pKey :string): StatusItem
   {
     function findByKey(pItem)
     {
@@ -56,7 +56,7 @@ export class StatusItemListComponent implements OnInit, OnDestroy {
    *  Set the value of the StatusItem whose key
    *  equals pKey to the value of pValue.
    */
-  updateStatusItem(pKey :string, pValue : string)
+  updateStatusItem(pKey :string, pValue :string)
   {
     let item :StatusItem;
     if (item = this.getStatusItemByKey(pKey))

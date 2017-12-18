@@ -89,7 +89,7 @@ export class MenuComponent {
     switch (pMenuItem.id)
     {
       case "mainMenu_NewPage":
-        this.layoutTabsComponent.addNewLayoutPage();
+        this.layoutTabsComponent.addLayoutPage();
         break;
 
       case "mainMenu_TabPrev":

@@ -1,8 +1,11 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation }         from '@angular/core';
+import { OnInit, OnDestroy }                    from '@angular/core';
 import { MatTabsModule, MatTabChangeEvent }     from '@angular/material/tabs';
-import { LayoutPage }                           from '../layout-page'
+import { Subscription }                         from 'rxjs/Subscription';
+import { LayoutPage }                           from '../layout-page';
 import { LayoutPageService }                    from '../layout-page.service';
 import { StatusItemListComponent }              from '../status-item-list/status-item-list.component';
+import { setInterval } from 'timers';
 
 @Component({
   selector: 'app-layout-tabs',
@@ -11,73 +14,70 @@ import { StatusItemListComponent }              from '../status-item-list/status
   encapsulation: ViewEncapsulation.None
 })
 
-export class LayoutTabsComponent implements OnInit {
-
-  constructor(private layoutPageService: LayoutPageService)
-  {
-    this.layoutPages = this.layoutPageService.getLayoutPages();
-  }
-
-  ngOnInit()
-  {
-    this.selectedLayoutPage = (this.layoutPages && this.layoutPages.length > 0) ? this.layoutPages[0] : null;
-    this.updateStatusItemActivePage();
-  }
+export class LayoutTabsComponent implements OnInit, OnDestroy {
 
   layoutPages             :LayoutPage[];
   selectedLayoutPage      :LayoutPage;
   selectedTabIndex        :number = 0;
-  selectedTabPageId       :number;
   statusItemListComponent :StatusItemListComponent;   // Set by app.component
+  private subscription    :Subscription;
+
+  constructor(private layoutPageService: LayoutPageService)
+  { }
+
+  ngOnInit()
+  {
+    this.subscription = this.layoutPageService.LayoutPages$.subscribe(data => this.updateLayoutPages(data));
+  }
+
+  ngOnDestroy()
+  {
+    if (this.subscription != null && this.subscription != undefined)
+    {
+      this.subscription.unsubscribe();
+    }
+  }
 
   /*
    * Handler for 'selectedTabChange' event.
    */
   onSelectedTabChanged(pEvent :MatTabChangeEvent)
   {
-    console.log("onSelectedTabChanged(): Begins; pEvent.index='" + pEvent.index + "'");
+    console.log(`onSelectedTabChanged(): Begins; pEvent.index='${pEvent.index}'`);
     this.selectedLayoutPage = this.layoutPages[pEvent.index];
     this.updateStatusItemActivePage();
-    console.log("onSelectedTabChanged(): Ends; this.selectedTabIndex = '" + this.selectedTabIndex + "'");
-  }
-
-  /*
-   * Determine a unique ID for a new layout page.
-   */
-  private getNewTabNo() :number
-  {
-    let maxVal = -1;
-    for (let ix = 0; ix < this.layoutPages.length; ix++)
-    {
-      if (this.layoutPages[ix].id > maxVal)
-      {
-        maxVal = this.layoutPages[ix].id;
-      }
-    }
-
-    return (maxVal + 1);
+    console.log(`onSelectedTabChanged(): Ends; this.selectedTabIndex = '${this.selectedTabIndex}'`);
   }
 
   /*
    *  Create a new LayoutPage and insert it into the LayoutPages list.
    */
-  addNewLayoutPage()
+  addLayoutPage()
   {
-    console.log("addNewLayoutPage(): Begins")
-    let newPageId :number = this.layoutPageService.getNewLayoutPageId();
-    let newPage: LayoutPage = { id: newPageId, value: 0 };
-    this.layoutPages.splice(this.selectedTabIndex, 0, newPage);
-    this.updateStatusItemActivePage();
-    console.log("addNewLayoutPage(): Ends")
+    console.log(`LayoutTabsComponent.addNewLayoutPage(): Begins`);
+    let newPage :LayoutPage = { id: null, value: 0 };
+    let ix = this.layoutPageService.insertLayoutPage(newPage, this.selectedTabIndex);
+    console.log(`LayoutTabsComponent.addNewLayoutPage(): Ends: ix = '${ix}`);
   }
 
   /*
    * Delete the specified LayoutPage from the list.
    */
-  deleteTab()
+  deleteLayoutPage()
   {
-    this.layoutPages.splice(this.selectedTabIndex, 1);
+    console.log(`LayoutTabsComponent.deleteTab(): Begins`);
+    this.layoutPageService.deleteLayoutPage(this.selectedLayoutPage.id);
+    console.log(`LayoutTabsComponent.deleteTab(): Ends`);
+  }
+
+  private updateLayoutPages(pData :LayoutPage[])
+  {
+    console.log(`LayoutTabsComponent.updateLayoutPages(): Begins; pData.length = '${pData.length}'`);
+    this.layoutPages = pData;
+    console.log(`LayoutTabsComponent.updateLayoutPages(): this.selectedTabIndex = '${this.selectedTabIndex}'`);
+    this.selectedLayoutPage = pData[this.selectedTabIndex];
     this.updateStatusItemActivePage();
+    console.log(`LayoutTabsComponent.updateLayoutPages(): Ends; this.selectedLayoutPage.id = '${this.selectedLayoutPage.id}'`);
   }
 
   /*
@@ -85,11 +85,16 @@ export class LayoutTabsComponent implements OnInit {
    */
   updateStatusItemActivePage()
   {
+    console.log(`LayoutTabsComponent.updateStatusItemActivePage(): Begins`);
     if (this.statusItemListComponent)
     {
-      this.statusItemListComponent.updateStatusItem('activePage', this.selectedLayoutPage.id.toString());
-      console.log("updateStatusItemActivePage(): New value = '" + this.selectedLayoutPage.id + "'");
+      this.statusItemListComponent.updateStatusItem('activePage', `${this.selectedLayoutPage.id}`);
+      console.log(`LayoutTabsComponent.updateStatusItemActivePage(): New value = '${this.selectedLayoutPage.id}'`);
     }
+    else
+      console.log(`LayoutTabsComponent.updateStatusItemActivePage(): this.statusItemListComponent = 'null'`);
+    
+    console.log(`LayoutTabsComponent.updateStatusItemActivePage(): Ends`);
   }
 
   /*

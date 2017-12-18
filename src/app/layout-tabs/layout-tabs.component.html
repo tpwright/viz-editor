@@ -7,7 +7,7 @@
       <span class='layout-tab-label-text'> Page {{tab.id}} </span>
       <button class='layout-tab-label-button'
               *ngIf="ix == selectedTabIndex"
-              (click)="deleteTab()">
+              (click)="deleteLayoutPage()">
         <mat-icon class='layout-tab-label-icon'>delete_forever</mat-icon>
       </button>
       </div>
@@ -18,7 +18,6 @@
       <ul>
       <li>selectedTabIndex = {{selectedTabIndex}}</li>
       <li>selectedLayoutPage.id = {{selectedLayoutPage.id}}</li>
-      <li>selectedTabPageId = {{selectedTabPageId}}</li>
       </ul>
     </div>
   </mat-tab>

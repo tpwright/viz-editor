@@ -5,7 +5,6 @@ import { Subscription }                         from 'rxjs/Subscription';
 import { LayoutPage }                           from '../layout-page';
 import { LayoutPageService }                    from '../layout-page.service';
 import { StatusItemListComponent }              from '../status-item-list/status-item-list.component';
-import { setInterval } from 'timers';
 
 @Component({
   selector: 'app-layout-tabs',

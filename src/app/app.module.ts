@@ -1,8 +1,11 @@
 import { BrowserModule }            from '@angular/platform-browser';
-import { NgModule }                 from '@angular/core';
 import { BrowserAnimationsModule }  from '@angular/platform-browser/animations';
 import { MatTabsModule }            from '@angular/material/tabs';
 import { MatIconModule }            from '@angular/material/icon';
+import { MatMenuModule }            from '@angular/material/menu';
+import { MatToolbarModule }         from '@angular/material/toolbar';
+import { MatListModule }            from '@angular/material/list';
+import { NgModule }                 from '@angular/core';
 
 import { AppComponent }             from './app.component';
 import { MenuComponent }            from './menu/menu.component';
@@ -21,7 +24,10 @@ import { StatusItemListComponent }  from './status-item-list/status-item-list.co
     BrowserModule,            // The order of these imports is critical
     MatTabsModule,
     BrowserAnimationsModule,
+    MatMenuModule,
+    MatToolbarModule,
     MatIconModule,
+    MatListModule,
   ],
   providers: [ LayoutPageService ],
   bootstrap: [AppComponent]

@@ -1,10 +1,16 @@
-import { Component, ViewEncapsulation }         from '@angular/core';
-import { OnInit, OnDestroy }                    from '@angular/core';
-import { MatTabsModule, MatTabChangeEvent }     from '@angular/material/tabs';
-import { Subscription }                         from 'rxjs/Subscription';
-import { LayoutPage }                           from '../layout-page';
-import { LayoutPageService }                    from '../layout-page.service';
-import { StatusItemListComponent }              from '../status-item-list/status-item-list.component';
+import { Component, ViewEncapsulation }             from '@angular/core';
+import { OnInit, OnDestroy }                        from '@angular/core';
+import { MatTabsModule, MatTabChangeEvent }         from '@angular/material/tabs';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { BehaviorSubject }                          from 'rxjs/BehaviorSubject';
+import { Observable }                               from 'rxjs/Observable';
+import { Subscription }                             from 'rxjs/Subscription';
+
+import { ConfirmDialogComponent }                   from '../confirm-dialog/confirm-dialog.component';
+import { LayoutPage }                               from '../layout-page';
+import { LayoutPageService }                        from '../layout-page.service';
+import { StatusItem }                               from '../status-item';
+import { StatusItemService }                        from '../status-item.service';
 
 @Component({
   selector: 'app-layout-tabs',
@@ -15,26 +21,66 @@ import { StatusItemListComponent }              from '../status-item-list/status
 
 export class LayoutTabsComponent implements OnInit, OnDestroy {
 
-  layoutPages             :LayoutPage[];
-  selectedLayoutPage      :LayoutPage;
-  selectedTabIndex        :number = 0;
-  statusItemListComponent :StatusItemListComponent;   // Set by app.component
-  private subscription    :Subscription;
+  layoutPages                     :LayoutPage[];
+  selectedLayoutPage              :StatusItem = {  key: '_activePage', heading: 'Active Page', value: '' };
+  selectedLayoutPageId            :number;
+  selectedTabIndex                :number = 0;
+  private _selectedLayoutPageId$ = new BehaviorSubject<string>(null); 
+  private _subscriptions          :Subscription[] = [];
 
-  constructor(private layoutPageService: LayoutPageService)
+  constructor( private layoutPageService :LayoutPageService,
+               private statusItemService :StatusItemService,
+               public dialog :MatDialog, )
   { }
 
   ngOnInit()
   {
-    this.subscription = this.layoutPageService.LayoutPages$.subscribe(data => this.updateLayoutPages(data));
+    this._subscriptions.push(this.layoutPageService.layoutPages$.subscribe(data => this.updateLayoutPages(data)));
+    this._subscriptions.push(this.statusItemService.statusItems$.subscribe(data => this.updateSelectedPageId(data)));
+    this.statusItemService.updateStatusItem(this.selectedLayoutPage);
   }
 
   ngOnDestroy()
   {
-    if (this.subscription != null && this.subscription != undefined)
+    let sub :Subscription;
+
+    while (sub = this._subscriptions.pop())
     {
-      this.subscription.unsubscribe();
+      sub.unsubscribe();
     }
+  }
+
+  get selectedLayoutPageId$() :Observable<string>
+  {
+      return this._selectedLayoutPageId$.asObservable();
+  }
+
+  /*
+   * Open the confirmation dialog using the
+   * supplied title and message.
+   * Return: 'true' if the user confirmed the dialog.
+   */
+  openConfirmDialog(pTitle :string, pMessage :string, pPrompt :string, pConfirmFunction :() => any) :void
+  {
+    let dialogRef = this.dialog.open(ConfirmDialogComponent,
+                                     {
+                                      width: '250px',
+                                      data: { title:   pTitle,
+                                              message: pMessage,
+                                              prompt:  pPrompt }
+                                     });
+
+    dialogRef.afterClosed().subscribe(result => 
+      {
+        console.log(`LayoutTabsComponent.openDialog.dialogRef.afterClosed(): result = '${result}'`);
+        if (result == true)
+        {
+          if (pConfirmFunction)
+            pConfirmFunction();
+          else
+            console.log(`LayoutTabsComponent.openDialog.dialogRef.afterClosed(): pConfirmFunction is missing!`);
+        }
+      });
   }
 
   /*
@@ -43,8 +89,11 @@ export class LayoutTabsComponent implements OnInit, OnDestroy {
   onSelectedTabChanged(pEvent :MatTabChangeEvent)
   {
     console.log(`onSelectedTabChanged(): Begins; pEvent.index='${pEvent.index}'`);
-    this.selectedLayoutPage = this.layoutPages[pEvent.index];
-    this.updateStatusItemActivePage();
+
+    this._selectedLayoutPageId$.next(this.layoutPages[pEvent.index].id.toString());
+    this.selectedLayoutPage.value = this.layoutPages[pEvent.index].id.toString();
+    this.statusItemService.updateStatusItem(this.selectedLayoutPage);
+
     console.log(`onSelectedTabChanged(): Ends; this.selectedTabIndex = '${this.selectedTabIndex}'`);
   }
 
@@ -64,9 +113,13 @@ export class LayoutTabsComponent implements OnInit, OnDestroy {
    */
   deleteLayoutPage()
   {
-    console.log(`LayoutTabsComponent.deleteTab(): Begins`);
-    this.layoutPageService.deleteLayoutPage(this.selectedLayoutPage.id);
-    console.log(`LayoutTabsComponent.deleteTab(): Ends`);
+    console.log(`LayoutTabsComponent.deleteLayoutPage(): Begins`);
+    if (confirm(`Permanently delete all data for Layout Page '${this.selectedLayoutPageId}'?`))
+    {
+      this.layoutPageService.deleteLayoutPage(this.selectedLayoutPageId);
+      console.log(`LayoutTabsComponent.deleteLayoutPage(): LayoutPage deleted!`);
+    }
+    console.log(`LayoutTabsComponent.deleteLayoutPage(): Ends`);
   }
 
   private updateLayoutPages(pData :LayoutPage[])
@@ -74,26 +127,21 @@ export class LayoutTabsComponent implements OnInit, OnDestroy {
     console.log(`LayoutTabsComponent.updateLayoutPages(): Begins; pData.length = '${pData.length}'`);
     this.layoutPages = pData;
     console.log(`LayoutTabsComponent.updateLayoutPages(): this.selectedTabIndex = '${this.selectedTabIndex}'`);
-    this.selectedLayoutPage = pData[this.selectedTabIndex];
-    this.updateStatusItemActivePage();
-    console.log(`LayoutTabsComponent.updateLayoutPages(): Ends; this.selectedLayoutPage.id = '${this.selectedLayoutPage.id}'`);
+    this._selectedLayoutPageId$.next(pData[this.selectedTabIndex].id.toString());
+
+    this.selectedLayoutPage.value = pData[this.selectedTabIndex].id.toString();
+    this.statusItemService.updateStatusItem(this.selectedLayoutPage);
+
+    console.log(`LayoutTabsComponent.updateLayoutPages(): Ends`);
   }
 
-  /*
-   *  Update the StatusItem which displays the current active page ID.
-   */
-  updateStatusItemActivePage()
+  updateSelectedPageId(pData :StatusItem[])
   {
-    console.log(`LayoutTabsComponent.updateStatusItemActivePage(): Begins`);
-    if (this.statusItemListComponent)
+    let ix = pData.findIndex(item => item.key == this.selectedLayoutPage.key);
+    if (ix >= 0)
     {
-      this.statusItemListComponent.updateStatusItem('activePage', `${this.selectedLayoutPage.id}`);
-      console.log(`LayoutTabsComponent.updateStatusItemActivePage(): New value = '${this.selectedLayoutPage.id}'`);
+      this.selectedLayoutPageId = parseInt(pData[ix].value);
     }
-    else
-      console.log(`LayoutTabsComponent.updateStatusItemActivePage(): this.statusItemListComponent = 'null'`);
-    
-    console.log(`LayoutTabsComponent.updateStatusItemActivePage(): Ends`);
   }
 
   /*

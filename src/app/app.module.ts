@@ -5,17 +5,21 @@ import { MatIconModule }            from '@angular/material/icon';
 import { MatMenuModule }            from '@angular/material/menu';
 import { MatToolbarModule }         from '@angular/material/toolbar';
 import { MatListModule }            from '@angular/material/list';
+import { MatDialogModule }          from '@angular/material';
 import { NgModule }                 from '@angular/core';
 
 import { AppComponent }             from './app.component';
-import { MenuComponent }            from './menu/menu.component';
+import { ConfirmDialogComponent }   from './confirm-dialog/confirm-dialog.component';
 import { LayoutPageService }        from './layout-page.service';
 import { LayoutTabsComponent }      from './layout-tabs/layout-tabs.component';
+import { MenuComponent }            from './menu/menu.component';
 import { StatusItemListComponent }  from './status-item-list/status-item-list.component';
+import { StatusItemService }        from './status-item.service';
 
 @NgModule({
   declarations: [
     AppComponent,
+    ConfirmDialogComponent,
     MenuComponent,
     LayoutTabsComponent,
     StatusItemListComponent,
@@ -25,11 +29,18 @@ import { StatusItemListComponent }  from './status-item-list/status-item-list.co
     MatTabsModule,
     BrowserAnimationsModule,
     MatMenuModule,
+    MatDialogModule,
     MatToolbarModule,
     MatIconModule,
     MatListModule,
   ],
-  providers: [ LayoutPageService ],
+  entryComponents: [
+    ConfirmDialogComponent
+  ],
+  providers: [
+    LayoutPageService,
+    StatusItemService,
+  ],
   bootstrap: [AppComponent]
 })
 

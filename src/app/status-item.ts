@@ -7,7 +7,8 @@
  * 
  * 'value' is the text that appears on the bottom line of the displayed entry.
  */
-export interface StatusItem {
+export interface StatusItem
+{
     key:        string;
     heading:    string;
     value:      string;

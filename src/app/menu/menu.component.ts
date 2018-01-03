@@ -44,8 +44,6 @@ export class MenuComponent {
     { id: 'fileMenu_Sep1' },
     { id: 'fileMenu_Import',    label: 'Import...', },
     { id: 'fileMenu_Export',    label: 'Export...', },
-    { id: 'fileMenu_Sep2' },
-    { id: 'fileMenu_Exit',      label: 'Exit' },
   ];
 
   lengthMenuItems = [
@@ -103,134 +101,128 @@ export class MenuComponent {
 
     switch (pMenuItem)
     {
+      case "alignMenu_Left":
+        break;
+
+      case "alignMenu_Center":
+        break;
+
+      case "alignMenu_Right":
+        break;
+
+      case "alignMenu_Top":
+        break;
+
+      case "alignMenu_Middle":
+        break;
+
+      case "alignMenu_Bottom":
+        break;
+
+      case "editMenu_Copy":
+        break;
+
+      case "editMenu_Paste":
+        break;
+
+      case "editMenu_Cut":
+        break;
+
+      case "editMenu_Delete":
+        break;
+
       case "fileMenu_New":
         break;
 
-        case "fileMenu_Save":
+      case "fileMenu_Save":
         break;
 
-        case "fileMenu_SaveAs":
+      case "fileMenu_SaveAs":
         break;
 
-        case "fileMenu_Import":
+      case "fileMenu_Import":
         break;
 
-        case "fileMenu_Export":
+      case "fileMenu_Export":
+      break;
+
+      case "helpMenu_About":
         break;
 
-        case "fileMenu_Exit":
-        break;
-
-        case "editMenu_Copy":
-        break;
-
-        case "editMenu_Paste":
-        break;
-
-        case "editMenu_Cut":
-        break;
-
-        case "editMenu_Delete":
-        break;
-
-        case "insertMenu_Page":
-        break;
-
-        case "helpMenu_About":
-        break;
-
-        case "widgetMenu_RolrStr":
-        break;
-
-        case "widgetMenu_RolrCur":
-        break;
-
-        case "widgetMenu_BeltStr":
-        break;
-
-        case "widgetMenu_BeltCur":
-        break;
-
-        case "alignMenu_Left":
-        break;
-
-        case "alignMenu_Center":
-        break;
-
-        case "alignMenu_Right":
-        break;
-
-        case "alignMenu_Top":
-        break;
-
-        case "alignMenu_Middle":
-        break;
-
-        case "alignMenu_Bottom":
-        break;
-
-        case "rotateMenu_+1":
-        break;
-
-        case "rotateMenu_+10":
-        break;
-
-        case "rotateMenu_+45":
-        break;
-
-        case "rotateMenu_+90":
-        break;
-
-        case "rotateMenu_-1":
-        break;
-
-        case "rotateMenu_-10":
-        break;
-
-        case "rotateMenu_-45":
-        break;
-
-        case "rotateMenu_-90":
-        break;
-
-        case "lengthMenu_+1":
-        break;
-
-        case "lengthMenu_+5":
-        break;
-
-        case "lengthMenu_+25":
-        break;
-
-        case "lengthMenu_-1":
-        break;
-
-        case "lengthMenu_-5":
-        break;
-
-        case "lengthMenu_-25":
-        break;
-
-        case "widthMenu_+1":
-        break;
-
-        case "widthMenu_+2":
-        break;
-
-        case "widthMenu_+5":
-        break;
-
-        case "widthMenu_-1":
-        break;
-
-        case "widthMenu_-2":
-        break;
-
-        case "widthMenu_-5":
-        break;
-
-      case "mainMenu_NewPage":
+      case "insertMenu_Page":
         this.layoutTabsComponent.addLayoutPage();
+        break;
+
+      case "lengthMenu_+1":
+        break;
+
+      case "lengthMenu_+5":
+        break;
+
+      case "lengthMenu_+25":
+        break;
+
+      case "lengthMenu_-1":
+        break;
+
+      case "lengthMenu_-5":
+        break;
+
+      case "lengthMenu_-25":
+        break;
+
+      case "rotateMenu_+1":
+        break;
+
+      case "rotateMenu_+10":
+        break;
+
+      case "rotateMenu_+45":
+        break;
+
+      case "rotateMenu_+90":
+        break;
+
+      case "rotateMenu_-1":
+        break;
+
+      case "rotateMenu_-10":
+        break;
+
+      case "rotateMenu_-45":
+        break;
+
+      case "rotateMenu_-90":
+        break;
+
+      case "widgetMenu_RolrStr":
+        break;
+
+      case "widgetMenu_RolrCur":
+        break;
+
+      case "widgetMenu_BeltStr":
+        break;
+
+      case "widgetMenu_BeltCur":
+        break;
+
+      case "widthMenu_+1":
+        break;
+
+      case "widthMenu_+2":
+        break;
+
+      case "widthMenu_+5":
+        break;
+
+      case "widthMenu_-1":
+        break;
+
+      case "widthMenu_-2":
+        break;
+
+      case "widthMenu_-5":
         break;
 
       case "mainMenu_TabPrev":

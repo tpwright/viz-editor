@@ -7,8 +7,8 @@ import { LayoutPage }       from "./layout-page";
 @Injectable()
 export class LayoutPageService {
 
-  private _dataStore      :LayoutPage[];
-  private defLayoutPages  :LayoutPage[] = [ { id: 0, value: 0 },
+  private _dataStore      :LayoutPage[] = [];
+  private _defLayoutPages :LayoutPage[] = [ { id: 0, value: 0 },
                                             { id: 1, value: 0 },
                                             { id: 2, value: 0 },
                                             { id: 3, value: 0 },
@@ -17,13 +17,13 @@ export class LayoutPageService {
 
   constructor()
   {
-    this._dataStore = this.copyLayoutPageArray(this.defLayoutPages);
-    // this._layoutPages$ = <BehaviorSubject<LayoutPage[]>>new BehaviorSubject(Object.assign({}, this._dataStore));  
-    this._layoutPages$ = <BehaviorSubject<LayoutPage[]>>new BehaviorSubject(this.copyLayoutPageArray(this._dataStore));  
+    this._defLayoutPages.forEach(page => this._dataStore.push(page));
+
+    this._layoutPages$ = <BehaviorSubject<LayoutPage[]>>new BehaviorSubject(this._dataStore);  
     console.log(`LayoutPageService.constructor(): this._dataStore contains '${this._dataStore.length}' items`)  
   }
 
-  get LayoutPages$() :Observable<LayoutPage[]>
+  get layoutPages$() :Observable<LayoutPage[]>
   {
     return this._layoutPages$.asObservable();
   }
@@ -42,7 +42,7 @@ export class LayoutPageService {
     if (index > -1)
     {
       this._dataStore.splice(index, 1);
-      this._layoutPages$.next(this.copyLayoutPageArray(this._dataStore));
+      this._layoutPages$.next(this._dataStore);
       console.log(`LayoutPageService.deleteLayoutPage(): LayoutPage.id = '${pPageId}' deleted`);
       
       return(index);
@@ -66,7 +66,7 @@ export class LayoutPageService {
     console.log(`LayoutPageService.insertLayoutPage(): Begins`)
     this.assignLayoutPageId(pPage);
     this._dataStore.splice(pIndex, 0, pPage);
-    this._layoutPages$.next(this.copyLayoutPageArray(this._dataStore));
+    this._layoutPages$.next(this._dataStore);
     console.log(`LayoutPageService.insertLayoutPage(): Ends; '${pPage.id}' inserted at index = ${pIndex}`)
     
     return(pIndex);
@@ -81,11 +81,11 @@ export class LayoutPageService {
    */
   public updateLayoutPage(pPage :LayoutPage) :number
   {
-    var index = this._dataStore.findIndex(x => x.id == pPage.id);
+    let index = this._dataStore.findIndex(x => x.id == pPage.id);
     if (index > -1)
     {
       this._dataStore[index] = pPage;
-      this._layoutPages$.next(this.copyLayoutPageArray(this._dataStore));
+      this._layoutPages$.next(this._dataStore);
       console.log(`LayoutPageService.updateLayoutPage(): LayoutPage.id = '${pPage.id}' updated`);
       
       return(index);
@@ -118,18 +118,5 @@ export class LayoutPageService {
       pLayoutPage.id = lastPageId + 1;
       console.log(`LayoutPageService.assignLayoutPageId(): LayoutPage.id='${pLayoutPage.id} was assigned`);
     }
-  }
-
-  private copyLayoutPageArray(pArray :LayoutPage[]) :LayoutPage[]
-  {
-    // return (Object.assign([], pArray));
-    // let content :LayoutPage[] = [];
-    // pArray.forEach(element =>
-    //   {
-    //     content.push( { id: element.id, value: element.value } );
-    //   });
-    // console.log(`LayoutPageService.copyLayoutPageArray(): content.length = '${content.length}`);
-    // return (content);
-    return (pArray);
   }
 }

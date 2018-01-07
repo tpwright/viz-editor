@@ -1,10 +1,10 @@
 <mat-tab-group class="demo-tab-group"
        [(selectedIndex)]="selectedTabIndex"
        (selectedTabChange)="onSelectedTabChanged($event)">
-  <mat-tab *ngFor="let tab of layoutPages; let ix = index"  label="Tab {{tab.id}}">
+  <mat-tab *ngFor="let tab of layoutPages; let ix = index"  label="{{tab.name}}">
     <ng-template mat-tab-label>
       <div class='layout-tab-label'>
-      <span class='layout-tab-label-text'> Page {{tab.id}} </span>
+      <span class='layout-tab-label-text'>{{tab.name}} </span>
       <button class='layout-tab-label-button'
               *ngIf="ix == selectedTabIndex"
               (click)="deleteLayoutPage()">
@@ -14,11 +14,18 @@
     </ng-template>
 
     <div class="layout-tab-content">
-      Content for 'Page {{tab.id}}':
-      <ul>
-      <li>selectedTabIndex = {{selectedTabIndex}}</li>
-      <li>selectedLayoutPageId = {{selectedLayoutPageId}}</li>
-      </ul>
+      <svg class='svg-element'
+           attr.height='{{layoutPages[ix].height}}'
+           attr.width='{{layoutPages[ix].width}}'>
+        <path *ngIf="(ix % 4) == 0" class='svg-rect0' d='M 10 10 h 100 v 100 h -100 v -100'/>
+        <path *ngIf="(ix % 4) == 1" class='svg-rect1' d='M 10 10 h 100 v 100 h -100 v -100'/>
+        <path *ngIf="(ix % 4) == 2" class='svg-rect2' d='M 10 10 h 100 v 100 h -100 v -100'/>
+        <path *ngIf="(ix % 4) == 3" class='svg-rect3' d='M 10 10 h 100 v 100 h -100 v -100'/>
+      </svg>
+
+      <p>
+        SVG viewbox: {{layoutPages[ix].height}}h x {{layoutPages[ix].width}}w
+      </p>
     </div>
   </mat-tab>
 </mat-tab-group>

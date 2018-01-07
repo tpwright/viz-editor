@@ -1,20 +1,24 @@
 @import '../globals/styles/_colors';
 
-.layout-tabs-group {
+.layout-tabs-group
+{
   border: 1px solid #a10303;
 }
 
-.layout-tab-label {
+.layout-tab-label
+{
   display: inline-block;
   flex-direction: row;
   align-items: middle;
 }
 
-.layout-tab-label-text {
+.layout-tab-label-text
+{
   vertical-align: middle;
 }
 
-.layout-tab-label-button {
+.layout-tab-label-button
+{
   border: 0;
   margin: 5px 0;
   padding: 0;
@@ -22,15 +26,18 @@
   vertical-align: middle;
 }
 
-.layout-tab-label-icon {
+.layout-tab-label-icon
+{
   color: red;
 }
 
-.layout-tab-content {
+.layout-tab-content
+{
   padding: 5px;
 }
 
-.layout-tab-svg {
+.layout-tab-svg
+{
   margin: 5px;
   height: 400px;
   width: 1000px;
@@ -38,4 +45,39 @@
   border-width: 1px;
   border-radius: 6px;
   border-color: $borderColor;
+}
+
+.svg-element
+{
+  border-color: darkslategrey;
+  border-style: dotted;
+  border-width: 1px;
+}
+
+.svg-rect0
+{
+  stroke: black;
+  stroke-width: 1;
+  fill: azure;
+}
+
+.svg-rect1
+{
+  stroke: black;
+  stroke-width: 1;
+  fill: lightgreen;
+}
+
+.svg-rect2
+{
+  stroke: black;
+  stroke-width: 1;
+  fill: blueviolet;
+}
+
+.svg-rect3
+{
+  stroke: black;
+  stroke-width: 1;
+  fill: lightsalmon;
 }

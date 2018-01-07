@@ -7,7 +7,7 @@ import { Observable }                               from 'rxjs/Observable';
 import { Subscription }                             from 'rxjs/Subscription';
 
 import { ConfirmDialogComponent }                   from '../confirm-dialog/confirm-dialog.component';
-import { LayoutPage }                               from '../layout-page';
+import { LayoutPage }                               from '../models/layout-page';
 import { LayoutPageService }                        from '../layout-page.service';
 import { StatusItem }                               from '../status-item';
 import { StatusItemService }                        from '../status-item.service';
@@ -23,9 +23,8 @@ export class LayoutTabsComponent implements OnInit, OnDestroy {
 
   layoutPages                     :LayoutPage[];
   selectedLayoutPage              :StatusItem = {  key: '_activePage', heading: 'Active Page', value: '' };
-  selectedLayoutPageId            :number;
+  selectedLayoutPageName          :string;
   selectedTabIndex                :number = 0;
-  private _selectedLayoutPageId$ = new BehaviorSubject<string>(null); 
   private _subscriptions          :Subscription[] = [];
 
   constructor( private layoutPageService :LayoutPageService,
@@ -48,11 +47,6 @@ export class LayoutTabsComponent implements OnInit, OnDestroy {
     {
       sub.unsubscribe();
     }
-  }
-
-  get selectedLayoutPageId$() :Observable<string>
-  {
-      return this._selectedLayoutPageId$.asObservable();
   }
 
   /*
@@ -86,12 +80,12 @@ export class LayoutTabsComponent implements OnInit, OnDestroy {
   /*
    * Handler for 'selectedTabChange' event.
    */
-  onSelectedTabChanged(pEvent :MatTabChangeEvent)
+  public onSelectedTabChanged(pEvent :MatTabChangeEvent)
   {
     console.log(`onSelectedTabChanged(): Begins; pEvent.index='${pEvent.index}'`);
 
-    this._selectedLayoutPageId$.next(this.layoutPages[pEvent.index].id.toString());
-    this.selectedLayoutPage.value = this.layoutPages[pEvent.index].id.toString();
+    this.selectedLayoutPageName = this.layoutPages[pEvent.index].name;
+    this.selectedLayoutPage.value = this.layoutPages[pEvent.index].name;
     this.statusItemService.updateStatusItem(this.selectedLayoutPage);
 
     console.log(`onSelectedTabChanged(): Ends; this.selectedTabIndex = '${this.selectedTabIndex}'`);
@@ -100,10 +94,10 @@ export class LayoutTabsComponent implements OnInit, OnDestroy {
   /*
    *  Create a new LayoutPage and insert it into the LayoutPages list.
    */
-  addLayoutPage()
+  public addLayoutPage()
   {
     console.log(`LayoutTabsComponent.addNewLayoutPage(): Begins`);
-    let newPage :LayoutPage = { id: null, value: 0 };
+    let newPage = new LayoutPage(null, 850, 1000, 6);
     let ix = this.layoutPageService.insertLayoutPage(newPage, this.selectedTabIndex);
     console.log(`LayoutTabsComponent.addNewLayoutPage(): Ends: ix = '${ix}`);
   }
@@ -111,12 +105,12 @@ export class LayoutTabsComponent implements OnInit, OnDestroy {
   /*
    * Delete the specified LayoutPage from the list.
    */
-  deleteLayoutPage()
+  public deleteLayoutPage()
   {
     console.log(`LayoutTabsComponent.deleteLayoutPage(): Begins`);
-    if (confirm(`Permanently delete all data for Layout Page '${this.selectedLayoutPageId}'?`))
+    if (confirm(`Permanently delete all data for Layout Page '${this.selectedLayoutPageName}'?`))
     {
-      this.layoutPageService.deleteLayoutPage(this.selectedLayoutPageId);
+      this.layoutPageService.deleteLayoutPage(this.selectedLayoutPageName);
       console.log(`LayoutTabsComponent.deleteLayoutPage(): LayoutPage deleted!`);
     }
     console.log(`LayoutTabsComponent.deleteLayoutPage(): Ends`);
@@ -126,21 +120,20 @@ export class LayoutTabsComponent implements OnInit, OnDestroy {
   {
     console.log(`LayoutTabsComponent.updateLayoutPages(): Begins; pData.length = '${pData.length}'`);
     this.layoutPages = pData;
-    console.log(`LayoutTabsComponent.updateLayoutPages(): this.selectedTabIndex = '${this.selectedTabIndex}'`);
-    this._selectedLayoutPageId$.next(pData[this.selectedTabIndex].id.toString());
 
-    this.selectedLayoutPage.value = pData[this.selectedTabIndex].id.toString();
+    console.log(`LayoutTabsComponent.updateLayoutPages(): this.selectedTabIndex = '${this.selectedTabIndex}'`);
+    this.selectedLayoutPage.value = pData[this.selectedTabIndex].name.toString();
     this.statusItemService.updateStatusItem(this.selectedLayoutPage);
 
     console.log(`LayoutTabsComponent.updateLayoutPages(): Ends`);
   }
 
-  updateSelectedPageId(pData :StatusItem[])
+  private updateSelectedPageId(pData :StatusItem[])
   {
     let ix = pData.findIndex(item => item.key == this.selectedLayoutPage.key);
     if (ix >= 0)
     {
-      this.selectedLayoutPageId = parseInt(pData[ix].value);
+      this.selectedLayoutPageName = pData[ix].value;
     }
   }
 
@@ -150,7 +143,7 @@ export class LayoutTabsComponent implements OnInit, OnDestroy {
    *  pStep < 0: go to previous tab.
    *  pstep > 0: go to next tab.
  */
-  stepToTab(pStep :number)
+  public stepToTab(pStep :number)
   {
     if (pStep > 0)
     {
@@ -168,7 +161,7 @@ export class LayoutTabsComponent implements OnInit, OnDestroy {
    *  pStep < 0: go to first tab.
    *  pstep > 0: go to last tab.
    */
-  goToTab(pStep :number)
+  public goToTab(pStep :number)
   {
     if (pStep > 0)
     {

@@ -1,5 +1,11 @@
-import { Component, ViewEncapsulation }   from '@angular/core';
-import { LayoutTabsComponent }            from '../layout-tabs/layout-tabs.component';
+import { Component, ViewEncapsulation }             from '@angular/core';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+
+import { CookieService }                            from 'ngx-cookie';
+
+import { EditSettingsComponent }                    from '../edit-settings/edit-settings.component';
+import { LayoutTabsComponent }                      from '../layout-tabs/layout-tabs.component';
+import { Settings }                                 from '../models/settings';
 
 @Component({
   selector: 'app-menu',
@@ -10,13 +16,16 @@ import { LayoutTabsComponent }            from '../layout-tabs/layout-tabs.compo
 
 export class MenuComponent {
 
-  constructor() { }
+  constructor( private _cookieService :CookieService,
+               private _dialog :MatDialog,
+               )
+  { }
 
-  layoutTabsComponent :LayoutTabsComponent;   // Set by app.component
+  layoutTabsComponent :LayoutTabsComponent;   // Set by AppComponent
 
-  selectedMenuItem :string;                   // The label of the selected menu item
+  public selectedMenuItem :string;                   // The label of the selected menu item
 
-  alignMenuItems = [
+  public alignMenuItems = [
     { id: 'alignMenu_Left',     label: 'Left' },
     { id: 'alignMenu_Center',   label: 'Center' },
     { id: 'alignMenu_Right',    label: 'Right' },
@@ -26,7 +35,7 @@ export class MenuComponent {
     { id: 'alignMenu_Bottom',   label: 'Bottom' },
   ];
 
-  editMenuItems = [
+  public editMenuItems = [
     { id: 'editMenu_Copy',      label: 'Copy' },
     { id: 'editMenu_Paste',     label: 'Paste' },
     { id: 'editMenu_Sep1' },
@@ -36,7 +45,7 @@ export class MenuComponent {
     { id: 'editMenu_Settings',  label: 'Settings'}
   ];
   
-  fileMenuItems = [
+  public fileMenuItems = [
     { id: 'fileMenu_Open',      label: 'Open' },
     { id: 'fileMenu_New',       label: 'New' },
     { id: 'fileMenu_Save',      label: 'Save' },
@@ -46,7 +55,7 @@ export class MenuComponent {
     { id: 'fileMenu_Export',    label: 'Export...' },
   ];
 
-  lengthMenuItems = [
+  public lengthMenuItems = [
     { id: 'lengthMenu_+1',      label: '+1px'  },
     { id: 'lengthMenu_+5',      label: '+5px'  },
     { id: 'lengthMenu_+25',     label: '+25px' },
@@ -56,7 +65,7 @@ export class MenuComponent {
     { id: 'lengthMenu_-25',     label: '-25px' },
   ];
 
-  rotateMenuItems = [
+  public rotateMenuItems = [
     { id: 'rotateMenu_+1',      label: '+1°'  },
     { id: 'rotateMenu_+10',     label: '+10°' },
     { id: 'rotateMenu_+45',     label: '+45°' },
@@ -68,7 +77,7 @@ export class MenuComponent {
     { id: 'rotateMenu_-90',     label: '-90°' },
   ];
 
-  widgetMenuItems = [
+  public widgetMenuItems = [
     { id: 'widgetMenu_RolrStr', label: 'Roller Conveyor, Straight' },
     { id: 'widgetMenu_RolrCur', label: 'Roller Conveyor, Curved' },
     { id: 'widgetMenu_Sep1' },
@@ -76,7 +85,7 @@ export class MenuComponent {
     { id: 'widgetMenu_BeltCur', label: 'Belt Conveyor, Curved' },
   ];
 
-  widthMenuItems = [
+  public widthMenuItems = [
     { id: 'widthMenu_+1',       label: '+1px' },
     { id: 'widthMenu_+2',       label: '+2px' },
     { id: 'widthMenu_+5',       label: '+5px' },
@@ -125,6 +134,7 @@ export class MenuComponent {
         break;
       
       case "editMenu_Settings":
+        this.openEditSettingsDialog();
         break;
 
       case "editMenu_Delete":
@@ -232,5 +242,27 @@ export class MenuComponent {
         this.layoutTabsComponent.stepToTab(1);
         break;
     }
+  }
+
+  /*
+   * Open the EditSettings dialog using the settings we retrieve
+   * from the CookieService. If the dialog is successfully
+   * completed, the updated settings values are used to
+   * update those maintained by the CookieService.
+   */
+  openEditSettingsDialog() :void
+  {
+    let currentSettings = new Settings();
+    let dialogRef = this._dialog.open(EditSettingsComponent,
+                                      { width: '350px', maxHeight: '600px',
+                                        data: { currentSettings }
+                                      });
+
+    dialogRef.afterClosed().subscribe(result =>
+      {
+        console.log(`MenuComponent.openEditSettingsDialog.dialogRef.afterClosed(): result = '${result}'`);
+        if (result)
+        { }
+      });
   }
 }

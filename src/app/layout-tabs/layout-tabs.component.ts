@@ -1,16 +1,15 @@
-import { Component, ViewEncapsulation }             from '@angular/core';
-import { OnInit, OnDestroy }                        from '@angular/core';
-import { MatTabsModule, MatTabChangeEvent }         from '@angular/material/tabs';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { BehaviorSubject }                          from 'rxjs/BehaviorSubject';
-import { Observable }                               from 'rxjs/Observable';
-import { Subscription }                             from 'rxjs/Subscription';
+import { Component, ViewEncapsulation }     from '@angular/core';
+import { OnInit, OnDestroy }                from '@angular/core';
+import { MatTabsModule, MatTabChangeEvent } from '@angular/material/tabs';
+import { Subscription }                     from 'rxjs/Subscription';
 
-import { ConfirmDialogComponent }                   from '../confirm-dialog/confirm-dialog.component';
-import { LayoutPage }                               from '../models/layout-page';
-import { LayoutPageService }                        from '../layout-page.service';
-import { StatusItem }                               from '../status-item';
-import { StatusItemService }                        from '../status-item.service';
+import { ConfirmDialogComponent }           from '../confirm-dialog/confirm-dialog.component';
+import { LayoutPage }                       from '../models/layout-page';
+import { LayoutPageService }                from '../layout-page.service';
+import { Settings }                         from '../models/settings';
+import { SettingsService }                  from '../settings.service';
+import { StatusItem }                       from '../status-item';
+import { StatusItemService }                from '../status-item.service';
 
 @Component({
   selector: 'app-layout-tabs',
@@ -21,22 +20,27 @@ import { StatusItemService }                        from '../status-item.service
 
 export class LayoutTabsComponent implements OnInit, OnDestroy {
 
-  layoutPages                     :LayoutPage[];
-  selectedLayoutPage              :StatusItem = {  key: '_activePage', heading: 'Active Page', value: '' };
-  selectedLayoutPageName          :string;
-  selectedTabIndex                :number = 0;
+  private _siSelectedLayoutPage   :StatusItem = { key: '_activePage', heading: 'Active Page', value: '' };
+  private _siSvgSize              :StatusItem = { key: '_svgSize',    heading: 'SVG Size',    value: '' };
+  private _settings               :Settings;
   private _subscriptions          :Subscription[] = [];
+  public  layoutPages             :LayoutPage[];
+  public  selectedTabIndex        :number = 0;
 
-  constructor( private layoutPageService :LayoutPageService,
-               private statusItemService :StatusItemService,
-               public dialog :MatDialog, )
+  constructor( private _layoutPageService :LayoutPageService,
+               private _settingsService   :SettingsService,
+               private _statusItemService :StatusItemService )
   { }
 
   ngOnInit()
   {
-    this._subscriptions.push(this.layoutPageService.layoutPages$.subscribe(data => this.updateLayoutPages(data)));
-    this._subscriptions.push(this.statusItemService.statusItems$.subscribe(data => this.updateSelectedPageId(data)));
-    this.statusItemService.updateStatusItem(this.selectedLayoutPage);
+    console.log(`LayoutTabsComponent.ngOnInit(): Begins`);
+    this.initFirstLayoutPage();
+    this._subscriptions.push(this._layoutPageService.layoutPages$.subscribe(data => this.updateLayoutPages(data)));
+    this._subscriptions.push(this._settingsService.settings$.subscribe(data =>this.updateSettings(data)));
+    this._statusItemService.updateStatusItem(this._siSelectedLayoutPage);
+    this._statusItemService.updateStatusItem(this._siSvgSize);
+    console.log(`LayoutTabsComponent.ngOnInit(): Ends`);
   }
 
   ngOnDestroy()
@@ -50,43 +54,17 @@ export class LayoutTabsComponent implements OnInit, OnDestroy {
   }
 
   /*
-   * Open the confirmation dialog using the
-   * supplied title and message.
-   * Return: 'true' if the user confirmed the dialog.
-   */
-  openConfirmDialog(pTitle :string, pMessage :string, pPrompt :string, pConfirmFunction :() => any) :void
-  {
-    let dialogRef = this.dialog.open(ConfirmDialogComponent,
-                                     {
-                                      width: '250px',
-                                      data: { title:   pTitle,
-                                              message: pMessage,
-                                              prompt:  pPrompt }
-                                     });
-
-    dialogRef.afterClosed().subscribe(result => 
-      {
-        console.log(`LayoutTabsComponent.openDialog.dialogRef.afterClosed(): result = '${result}'`);
-        if (result == true)
-        {
-          if (pConfirmFunction)
-            pConfirmFunction();
-          else
-            console.log(`LayoutTabsComponent.openDialog.dialogRef.afterClosed(): pConfirmFunction is missing!`);
-        }
-      });
-  }
-
-  /*
    * Handler for 'selectedTabChange' event.
    */
   public onSelectedTabChanged(pEvent :MatTabChangeEvent)
   {
     console.log(`onSelectedTabChanged(): Begins; pEvent.index='${pEvent.index}'`);
 
-    this.selectedLayoutPageName = this.layoutPages[pEvent.index].name;
-    this.selectedLayoutPage.value = this.layoutPages[pEvent.index].name;
-    this.statusItemService.updateStatusItem(this.selectedLayoutPage);
+    this._siSelectedLayoutPage.value = this.layoutPages[pEvent.index].name;
+    this._statusItemService.updateStatusItem(this._siSelectedLayoutPage);
+
+    this._siSvgSize.value = `${this.layoutPages[pEvent.index].height}h x ${this.layoutPages[pEvent.index].width}w`;
+    this._statusItemService.updateStatusItem(this._siSvgSize);
 
     console.log(`onSelectedTabChanged(): Ends; this.selectedTabIndex = '${this.selectedTabIndex}'`);
   }
@@ -98,7 +76,7 @@ export class LayoutTabsComponent implements OnInit, OnDestroy {
   {
     console.log(`LayoutTabsComponent.addNewLayoutPage(): Begins`);
     let newPage = new LayoutPage(null, 850, 1000, 6);
-    let ix = this.layoutPageService.insertLayoutPage(newPage, this.selectedTabIndex);
+    let ix = this._layoutPageService.insertLayoutPage(newPage, this.selectedTabIndex);
     console.log(`LayoutTabsComponent.addNewLayoutPage(): Ends: ix = '${ix}`);
   }
 
@@ -108,33 +86,90 @@ export class LayoutTabsComponent implements OnInit, OnDestroy {
   public deleteLayoutPage()
   {
     console.log(`LayoutTabsComponent.deleteLayoutPage(): Begins`);
-    if (confirm(`Permanently delete all data for Layout Page '${this.selectedLayoutPageName}'?`))
+    if (confirm(`Permanently delete all data for Layout Page '${this._siSelectedLayoutPage.value}'?`))
     {
-      this.layoutPageService.deleteLayoutPage(this.selectedLayoutPageName);
+      this._layoutPageService.deleteLayoutPage(this._siSelectedLayoutPage.value);
       console.log(`LayoutTabsComponent.deleteLayoutPage(): LayoutPage deleted!`);
     }
     console.log(`LayoutTabsComponent.deleteLayoutPage(): Ends`);
   }
 
+  /*
+   *  Initialize an empty LayoutPage
+   */
+  private initFirstLayoutPage()
+  {
+    console.log(`LayoutPageService.initFirstLayoutPage(): Begins`);
+
+    let newData :LayoutPage[] = [];
+
+    // Ensure we have some settings
+    this._settings = this._settingsService.getSettings();
+
+    let test = true;
+
+    if (test)
+    {
+      // Create some pages for testing
+      for (let i = 1; i <= 4; i++)
+      {
+        let newPage = new LayoutPage(null, this._settings.defPageHeight,
+                                           this._settings.defPageWidth,
+                                           this._settings.defScale);
+        newData.push(newPage);
+      }
+    }
+    else
+    {
+      let newPage = new LayoutPage('<new>', this._settings.defPageHeight,
+                                            this._settings.defPageWidth,
+                                            this._settings.defScale);
+        newData.push(newPage);
+    }
+
+    this._layoutPageService.replaceAllLayoutPages(newData);
+
+    console.log(`LayoutPageService.initFirstLayoutPage(): Ends; newData.length = '${newData.length}'`);
+  }
+
+  /*
+   *  The function that updates our collection of LayoutPage items
+   *  whenever we receive a new value of that collection.
+   */
   private updateLayoutPages(pData :LayoutPage[])
   {
-    console.log(`LayoutTabsComponent.updateLayoutPages(): Begins; pData.length = '${pData.length}'`);
-    this.layoutPages = pData;
+    if (pData)
+    {
+      console.log(`LayoutTabsComponent.updateLayoutPages(): Begins; pData.length = '${pData.length}'`);
+    
+      this.layoutPages = pData;
+      if (pData.length > 0)
+      {
+        this._siSelectedLayoutPage.value = pData[this.selectedTabIndex].name.toString();
+        this._siSvgSize.value = `${pData[this.selectedTabIndex].height}h x ${pData[this.selectedTabIndex].width}w`;
+      }
+      else
+      {
+        this._siSelectedLayoutPage.value = null;
+        this._siSvgSize.value = null;
+      }
 
-    console.log(`LayoutTabsComponent.updateLayoutPages(): this.selectedTabIndex = '${this.selectedTabIndex}'`);
-    this.selectedLayoutPage.value = pData[this.selectedTabIndex].name.toString();
-    this.statusItemService.updateStatusItem(this.selectedLayoutPage);
+      this._statusItemService.updateStatusItem(this._siSelectedLayoutPage);
+      this._statusItemService.updateStatusItem(this._siSvgSize);
+    }
+    else
+    {
+      console.log(`LayoutTabsComponent.updateLayoutPages(): Begins; pData is undefined`);
+    }
 
     console.log(`LayoutTabsComponent.updateLayoutPages(): Ends`);
   }
 
-  private updateSelectedPageId(pData :StatusItem[])
+  private updateSettings(pData :Settings)
   {
-    let ix = pData.findIndex(item => item.key == this.selectedLayoutPage.key);
-    if (ix >= 0)
-    {
-      this.selectedLayoutPageName = pData[ix].value;
-    }
+    console.log(`LayoutTabsComponent.updateSettings(): Begins; pData ='${pData}'`)
+    this._settings = pData;
+    console.log(`LayoutTabsComponent.updateSettings(): Ends`)
   }
 
   /*

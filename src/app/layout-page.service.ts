@@ -1,50 +1,88 @@
-import { Injectable }       from '@angular/core';
-import { Observable }       from 'rxjs/Observable';
-import { BehaviorSubject }  from 'rxjs/BehaviorSubject';
-import { map }              from 'rxjs/operators';
-import { LayoutPage }       from "./models/layout-page";
+import { Injectable, OnInit, OnDestroy }  from '@angular/core';
+import { BehaviorSubject }                from 'rxjs/BehaviorSubject';
+import { Observable }                     from 'rxjs/Observable';
+import { Subscription }                   from 'rxjs/Subscription';
+import { map }                            from 'rxjs/operators';
+
+import { LayoutPage }                     from './models/layout-page';
+import { Settings }                       from './models/settings';
+import { SettingsService }                from './settings.service';
 
 
 @Injectable()
-export class LayoutPageService {
+export class LayoutPageService implements OnInit, OnDestroy {
 
   private _dataStore      :LayoutPage[] = [];
-  private _layoutPages$   :BehaviorSubject<LayoutPage[]>; 
+  private _layoutPages$   :BehaviorSubject<LayoutPage[]>;
+  private _settings       :Settings
+  private _subscriptions  :Subscription[] = [];
 
-  constructor()
+  constructor(private _settingsService :SettingsService)
   {
     this._layoutPages$ = <BehaviorSubject<LayoutPage[]>>new BehaviorSubject(this._dataStore);  
-    this.loadLayoutPagesFromFile();
-    console.log(`LayoutPageService.constructor(): this._dataStore contains '${this._dataStore.length}' items`)  
+    this._subscriptions.push(_settingsService.settings$.subscribe(data => this.updateSettings(data)));
+  }
+
+  ngOnInit()
+  {
+    console.log(`LayoutPageService.ngOnInit(): Begins`)
+    this._settings = this._settingsService.getSettings();
+    console.log(`LayoutPageService.ngOnInit(): Ends`)
+  }
+
+  ngOnDestroy()
+  {
+    let sub :Subscription;
+    while (sub = this._subscriptions.pop())
+    {
+      sub.unsubscribe();
+    }
   }
 
   /*
-   *  Assign a unique 'name' to the specified LayoutPage,
-   *  but only if it does not already have one.
+   *  If it does not already have one, Assign a (unique) 'name'
+   *  to the specified LayoutPage.
    */
+  private _lastTime : number;
   private assignLayoutPageName(pLayoutPage :LayoutPage) :void
   {
     if (pLayoutPage && (!pLayoutPage.name))
     {
       let now = new Date();
-      let YY = (now.getFullYear() % 100).toString().padStart(2, '0');
-      let MM = (now.getMonth() + 1).toString().padStart(2, '0');  // January == 0
-      let DD = now.getDay().toString().padStart(2, '0');
-      let hh = now.getHours().toString().padStart(2, '0');
-      let mm = now.getMinutes().toString().padStart(2, '0');
-      let ss = now.getSeconds().toString().padStart(2, '0');
-      let ms = now.getMilliseconds().toString();
 
+      let YY = (now.getFullYear() % 1000).toString().padStart(2, '0');
+      let MM = (now.getMonth() + 1).toString().padStart(2, '0');
+      let DD = now.getDate().toString().padStart(2, '0');
+      let time = now.getHours();
+      time = time * 100 + now.getMinutes();
+      time = time * 100 + now.getSeconds(); 
+      time = time * 1000 + now.getMilliseconds();
+      while (time <= this._lastTime)
+      {
+        time += 1;
+      }
 
-      pLayoutPage.name = `${YY}${MM}${DD}${hh}${mm}${ss}${ms}`;
-
-      console.log(`LayoutPageService.assignLayoutPageId(): LayoutPage.name='${pLayoutPage.name} was assigned`);
+      this._lastTime = time;
+      
+      pLayoutPage.name = `${YY}${MM}${DD}${time.toString().padStart(9, '0')}`;
+      console.log(`LayoutPageService.assignLayoutPageName(): LayoutPage.name='${pLayoutPage.name} was assigned`);
     }
   }
 
   /*
-   * Delete from the LayoutPage array that page whose 'id'
-   * matches that specified.
+   *  Delete the entire collection of LayoutPages.
+   */
+  public deleteAllLayoutPages() :void
+  {
+    console.log(`LayoutPageService.deleteAllLayoutPages(): Begins`);
+    this._dataStore = [];
+    this._layoutPages$.next(this._dataStore);
+    console.log(`LayoutPageService.deleteAllLayoutPages(): Ends`);
+  }
+
+  /*
+   * Delete from the LayoutPage collection that page
+   * whose 'name' matches that specified.
    * 
    * Return: the array index of the deleted LayoutPage or
    * 'null' if it was not found.
@@ -87,7 +125,7 @@ export class LayoutPageService {
   }
 
   /*
-   *  Return: Observable that delivers Layout Pages collection changes.
+   *  Return: Observable that delivers LayoutPage collection changes.
    */
   public get layoutPages$() :Observable<LayoutPage[]>
   {
@@ -95,34 +133,16 @@ export class LayoutPageService {
   }
 
   /*
-   *  Load the Layout Pages collection from the last-opened data file (if any).
+   *  Replace the Layout Pages collection with the one supplied.
    */
-  public loadLayoutPagesFromFile(pDataFilePath :string = null) : void
+  public replaceAllLayoutPages(pData :LayoutPage[]) : void
   {
-    // Clear out any existing data
-    if (this._dataStore.length > 0)
-    {
-      this._dataStore = [];
-    }
+    console.log(`LayoutPageService.replaceAllLayoutPages(): Begins`)
 
-    // Load the collection from the data file
-    if (pDataFilePath)
-    {
-      // TODO:
-    }
-    else
-    {
-      // Temporary: initialize the collection
-      for (let i = 1; i <= 4; i++)
-      {
-        let newPage = new LayoutPage(null, 500, 1200, 2);
-        this.assignLayoutPageName(newPage);
-        this._dataStore.push(newPage);
-      }
-    }
-  
-    // Publish the collection
+    this._dataStore = pData;
     this._layoutPages$.next(this._dataStore);
+    
+    console.log(`LayoutPageService.replaceAllLayoutPages(): Ends; this._dataStore.Length = '${this._dataStore.length}'`);
   }
 
   /*
@@ -148,5 +168,15 @@ export class LayoutPageService {
       console.log(`LayoutPageService.updateLayoutPage(): LayoutPage.name = '${pPage.name}' not found; cannot update!`);
       return(null);
     }
+  }
+
+  /*
+   *  Save the newly-arrived Settings.
+   */
+  private updateSettings(pData :Settings) :void
+  {
+    console.log(`LayoutPageService.updateSettings(): Begins`)
+    this._settings = pData;
+    console.log(`LayoutPageService.updateSettings(): Ends`)    
   }
 }

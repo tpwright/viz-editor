@@ -8,11 +8,15 @@ import { MatListModule }            from '@angular/material/list';
 import { MatDialogModule }          from '@angular/material';
 import { NgModule }                 from '@angular/core';
 
+import { CookieModule }             from 'ngx-cookie';
+
 import { AppComponent }             from './app.component';
 import { ConfirmDialogComponent }   from './confirm-dialog/confirm-dialog.component';
+import { EditSettingsComponent } from './edit-settings/edit-settings.component';
 import { LayoutPageService }        from './layout-page.service';
 import { LayoutTabsComponent }      from './layout-tabs/layout-tabs.component';
 import { MenuComponent }            from './menu/menu.component';
+import { SettingsService }          from './settings.service';
 import { StatusItemListComponent }  from './status-item-list/status-item-list.component';
 import { StatusItemService }        from './status-item.service';
 
@@ -23,11 +27,13 @@ import { StatusItemService }        from './status-item.service';
     MenuComponent,
     LayoutTabsComponent,
     StatusItemListComponent,
+    EditSettingsComponent,
   ],
   imports: [
-    BrowserModule,            // The order of these imports is critical
+    BrowserModule,            // The order of this and MatTabsModule is critical
     MatTabsModule,
     BrowserAnimationsModule,
+    CookieModule.forRoot(),
     MatMenuModule,
     MatDialogModule,
     MatToolbarModule,
@@ -39,9 +45,10 @@ import { StatusItemService }        from './status-item.service';
   ],
   providers: [
     LayoutPageService,
+    SettingsService,
     StatusItemService,
   ],
   bootstrap: [AppComponent]
 })
 
-export class AppModule { }
+export class AppModule {}

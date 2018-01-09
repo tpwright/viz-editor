@@ -22,10 +22,6 @@
         <path *ngIf="(ix % 4) == 2" class='svg-rect2' d='M 10 10 h 100 v 100 h -100 v -100'/>
         <path *ngIf="(ix % 4) == 3" class='svg-rect3' d='M 10 10 h 100 v 100 h -100 v -100'/>
       </svg>
-
-      <p>
-        SVG viewbox: {{layoutPages[ix].height}}h x {{layoutPages[ix].width}}w
-      </p>
     </div>
   </mat-tab>
 </mat-tab-group>

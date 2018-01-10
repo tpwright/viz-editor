@@ -22,6 +22,7 @@ export class LayoutTabsComponent implements OnInit, OnDestroy {
 
   private _siSelectedLayoutPage   :StatusItem = { key: '_activePage', heading: 'Active Page', value: '' };
   private _siSvgSize              :StatusItem = { key: '_svgSize',    heading: 'SVG Size',    value: '' };
+  private _siDefScale             :StatusItem = { key: '_defScale',   heading: 'Def Scale',   value: '' };
   private _settings               :Settings;
   private _subscriptions          :Subscription[] = [];
   public  layoutPages             :LayoutPage[];
@@ -37,9 +38,11 @@ export class LayoutTabsComponent implements OnInit, OnDestroy {
     console.log(`LayoutTabsComponent.ngOnInit(): Begins`);
     this.initFirstLayoutPage();
     this._subscriptions.push(this._layoutPageService.layoutPages$.subscribe(data => this.updateLayoutPages(data)));
+
     this._subscriptions.push(this._settingsService.settings$.subscribe(data =>this.updateSettings(data)));
     this._statusItemService.updateStatusItem(this._siSelectedLayoutPage);
     this._statusItemService.updateStatusItem(this._siSvgSize);
+    this._statusItemService.updateStatusItem(this._siDefScale);
     console.log(`LayoutTabsComponent.ngOnInit(): Ends`);
   }
 
@@ -75,7 +78,10 @@ export class LayoutTabsComponent implements OnInit, OnDestroy {
   public addLayoutPage()
   {
     console.log(`LayoutTabsComponent.addNewLayoutPage(): Begins`);
-    let newPage = new LayoutPage(null, 850, 1000, 6);
+    let newPage = new LayoutPage(null, this._settings.defPageHeight,
+                                       this._settings.defPageWidth,
+                                       this._settings.defScale);
+    this._layoutPageService.assignLayoutPageName(newPage);
     let ix = this._layoutPageService.insertLayoutPage(newPage, this.selectedTabIndex);
     console.log(`LayoutTabsComponent.addNewLayoutPage(): Ends: ix = '${ix}`);
   }
@@ -169,6 +175,9 @@ export class LayoutTabsComponent implements OnInit, OnDestroy {
   {
     console.log(`LayoutTabsComponent.updateSettings(): Begins; pData ='${pData}'`)
     this._settings = pData;
+
+    this._siDefScale.value = this._settings.defScale.toString();
+    
     console.log(`LayoutTabsComponent.updateSettings(): Ends`)
   }
 
@@ -207,5 +216,19 @@ export class LayoutTabsComponent implements OnInit, OnDestroy {
     {
       this.selectedTabIndex = 0;
     }
+  }
+
+  public stepDefaultScale()
+  {
+    if (this._settings.defScale < 10)
+    {
+      this._settings.defScale += 1;
+    }
+    else
+    {
+      this._settings.defScale = 1;
+    }
+
+    this._settingsService.updateSettings(this._settings);
   }
 }

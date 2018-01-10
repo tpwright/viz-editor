@@ -8,16 +8,18 @@ import { Settings }                                 from '../models/settings';
   templateUrl: './edit-settings.component.html',
   styleUrls: ['./edit-settings.component.scss']
 })
-export class EditSettingsComponent implements OnInit {
+export class EditSettingsComponent implements OnInit
+{
 
   constructor(public dialogRef :MatDialogRef<EditSettingsComponent>,
-              @Inject(MAT_DIALOG_DATA) public data :{settings :Settings})
-  {
-        console.log(`EditSettingsComponent.constructor(): Begins; data = '${data.settings}'`)
- }
+              @Inject(MAT_DIALOG_DATA) public data :[{name :string, value :string|number|boolean}])
+  { }
 
   ngOnInit()
-  {
-  }
+  { }
 
+  closeDialog()
+  {
+    this.dialogRef.close('the new settings value');
+  }
 }

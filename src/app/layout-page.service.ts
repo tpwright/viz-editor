@@ -29,7 +29,7 @@ export class LayoutPageService {
    * N.B.: This is for testing and should go away at some point.
    */
   private _lastTime : number;
-  private assignLayoutPageName(pLayoutPage :LayoutPage) :void
+  public assignLayoutPageName(pLayoutPage :LayoutPage) :void
   {
     if (pLayoutPage && (!pLayoutPage.name))
     {

@@ -180,6 +180,18 @@ export class MenuComponent {
       case "lengthMenu_-25":
         break;
 
+      case "mainMenu_TabPrev":
+        this.layoutTabsComponent.stepToTab(-1);
+        break;
+
+      case "mainMenu_TabNext":
+        this.layoutTabsComponent.stepToTab(1);
+        break;
+
+      case "mainMenu_stepDefaultScale":
+        this.layoutTabsComponent.stepDefaultScale();
+        break;
+
       case "rotateMenu_+1":
         break;
 
@@ -232,14 +244,6 @@ export class MenuComponent {
         break;
 
       case "widthMenu_-5":
-        break;
-
-      case "mainMenu_TabPrev":
-        this.layoutTabsComponent.stepToTab(-1);
-        break;
-
-      case "mainMenu_TabNext":
-        this.layoutTabsComponent.stepToTab(1);
         break;
     }
   }

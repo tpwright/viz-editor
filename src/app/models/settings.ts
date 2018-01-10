@@ -20,21 +20,21 @@ export class Settings
     /*
      *  Provide an iterable list of the setting names and their values.
      */
-    public getSettingsList() :[{name :string, value :string|number|boolean}]
+    public getSettingsList() :{name :string, value :string|number|boolean}[]
     {
-        let sa = [];
+        let sa :{name :string, value :string|number|boolean}[] = [];
         sa.push({name: "defPageHeight",      value: this.defPageHeight});
         sa.push({name: "defPageWidth",       value: this.defPageWidth});
         sa.push({name: "defScale",           value: this.defScale});
         sa.push({name: "defConveyorWidthIn", value: this.defConveyorWidthIn});
-        return sa as [{name :string, value :string|number|boolean}];
+        return sa;
     }
 
     /*
      *  Apply the values contained in the provided list of setting names/values
      *  to the current settings.
      */
-    public applySettingsList(pSettingsList :[{name :string, value :string|number|boolean}]) :void
+    public applySettingsList(pSettingsList :{name :string, value :string|number|boolean}[]) :void
     {
         pSettingsList.forEach(setting =>
             {

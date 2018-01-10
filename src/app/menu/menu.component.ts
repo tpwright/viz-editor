@@ -1,11 +1,10 @@
 import { Component, ViewEncapsulation }             from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
-import { CookieService }                            from 'ngx-cookie';
-
 import { EditSettingsComponent }                    from '../edit-settings/edit-settings.component';
 import { LayoutTabsComponent }                      from '../layout-tabs/layout-tabs.component';
 import { Settings }                                 from '../models/settings';
+import { SettingsService }                          from '../settings.service';
 
 @Component({
   selector: 'app-menu',
@@ -16,9 +15,8 @@ import { Settings }                                 from '../models/settings';
 
 export class MenuComponent {
 
-  constructor( private _cookieService :CookieService,
-               private _dialog :MatDialog,
-               )
+  constructor( private _dialog :MatDialog,
+               private _settingsService :SettingsService )
   { }
 
   layoutTabsComponent :LayoutTabsComponent;   // Set by AppComponent
@@ -256,10 +254,10 @@ export class MenuComponent {
    */
   openEditSettingsDialog() :void
   {
-    let currentSettings = new Settings();
+    let settingsList = this._settingsService.getSettings().getSettingsList;
     let dialogRef = this._dialog.open(EditSettingsComponent,
                                       { width: '350px', maxHeight: '600px',
-                                        data: { currentSettings }
+                                        data: settingsList 
                                       });
 
     dialogRef.afterClosed().subscribe(result =>

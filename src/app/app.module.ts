@@ -41,7 +41,8 @@ import { StatusItemService }        from './status-item.service';
     MatListModule,
   ],
   entryComponents: [
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    EditSettingsComponent
   ],
   providers: [
     LayoutPageService,

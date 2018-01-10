@@ -1,7 +1,16 @@
 <h2 mat-dialog-title>Edit Settings</h2>
 
 <mat-dialog-content>
-  <p>Settings values go here.</p>
+  <ul>
+    <li *ngFor="let setting of settingsList">
+      <div>
+        {{setting.name}}
+      </div>
+      <div>
+        {{setting.value}}
+      </div>
+    </li>
+  </ul>
 </mat-dialog-content>
 
 <mat-dialog-actions>

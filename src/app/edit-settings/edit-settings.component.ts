@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit }                from '@angular/core';
+import { Component, Inject }                        from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 import { Settings }                                 from '../models/settings';
@@ -8,18 +8,19 @@ import { Settings }                                 from '../models/settings';
   templateUrl: './edit-settings.component.html',
   styleUrls: ['./edit-settings.component.scss']
 })
-export class EditSettingsComponent implements OnInit
+export class EditSettingsComponent
 {
 
-  constructor(public dialogRef :MatDialogRef<EditSettingsComponent>,
-              @Inject(MAT_DIALOG_DATA) public data :[{name :string, value :string|number|boolean}])
-  { }
+  public settingsList :{name :string, value :string|number|boolean}[];
 
-  ngOnInit()
-  { }
+  constructor(public dialogRef :MatDialogRef<EditSettingsComponent>,
+              @Inject(MAT_DIALOG_DATA) public data :{name :string, value :string|number|boolean}[])
+  {
+    this.settingsList = data;
+  }
 
   closeDialog()
   {
-    this.dialogRef.close('the new settings value');
+    this.dialogRef.close(this.settingsList);
   }
 }

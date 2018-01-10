@@ -9,29 +9,39 @@
   * See app.colors.scss for color variable definitions
   */
   @import './globals/styles/_colors';
+
+  *
+  {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
   
- .full-page {
+ .full-page
+ {
     display: flex;
     height: 97.5vh; /* 1 */
     flex-direction: column;
     border: solid 1px $borderColor;
 }
-.top-menu {
-    float: left;
+
+.top-menu
+{
     flex: none;
-    padding: 3px;
+    padding: 0px 3px 3px 3px; // top, right, bottom, left
     border-bottom: solid 1px $borderColor;
 }
 
-.layout-tabs {
-    float: left;
+.layout-tabs
+{
     flex: 1 0 auto; /* 2 */
     width: 99.75%;
     margin: 2px;
   }
   
-.status-bar {
-    flex: row;
+.status-bar
+{
+    flex: none;
     padding: 3px;
     border-top: solid 1px $borderColor;
   }

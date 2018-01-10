@@ -113,7 +113,7 @@ export class LayoutTabsComponent implements OnInit, OnDestroy {
       // Create some pages for testing
       for (let i = 1; i <= 4; i++)
       {
-        let newPage = new LayoutPage(null, this._settings.defPageHeight,
+        let newPage = new LayoutPage(`'Page ${i}'`, this._settings.defPageHeight,
                                            this._settings.defPageWidth,
                                            this._settings.defScale);
         newData.push(newPage);

@@ -1,47 +1,32 @@
-import { Injectable, OnInit, OnDestroy }  from '@angular/core';
-import { BehaviorSubject }                from 'rxjs/BehaviorSubject';
-import { Observable }                     from 'rxjs/Observable';
-import { Subscription }                   from 'rxjs/Subscription';
-import { map }                            from 'rxjs/operators';
+import { Injectable }       from '@angular/core';
+import { BehaviorSubject }  from 'rxjs/BehaviorSubject';
+import { Observable }       from 'rxjs/Observable';
+import { Subscription }     from 'rxjs/Subscription';
 
-import { LayoutPage }                     from './models/layout-page';
-import { Settings }                       from './models/settings';
-import { SettingsService }                from './settings.service';
+import { LayoutPage }       from './models/layout-page';
+import { Settings }         from './models/settings';
+import { SettingsService }  from './settings.service';
 
 
 @Injectable()
-export class LayoutPageService implements OnInit, OnDestroy {
+export class LayoutPageService {
 
   private _dataStore      :LayoutPage[] = [];
   private _layoutPages$   :BehaviorSubject<LayoutPage[]>;
-  private _settings       :Settings
   private _subscriptions  :Subscription[] = [];
 
-  constructor(private _settingsService :SettingsService)
+  constructor()
   {
-    this._layoutPages$ = <BehaviorSubject<LayoutPage[]>>new BehaviorSubject(this._dataStore);  
-    this._subscriptions.push(_settingsService.settings$.subscribe(data => this.updateSettings(data)));
-  }
-
-  ngOnInit()
-  {
-    console.log(`LayoutPageService.ngOnInit(): Begins`)
-    this._settings = this._settingsService.getSettings();
-    console.log(`LayoutPageService.ngOnInit(): Ends`)
-  }
-
-  ngOnDestroy()
-  {
-    let sub :Subscription;
-    while (sub = this._subscriptions.pop())
-    {
-      sub.unsubscribe();
-    }
+    console.log(`LayoutPageService.constructor(): Begins`)
+    this._layoutPages$ = <BehaviorSubject<LayoutPage[]>>new BehaviorSubject(this._dataStore); 
+    console.log(`LayoutPageService.constructor(): Ends`)
   }
 
   /*
    *  If it does not already have one, Assign a (unique) 'name'
    *  to the specified LayoutPage.
+   * 
+   * N.B.: This is for testing and should go away at some point.
    */
   private _lastTime : number;
   private assignLayoutPageName(pLayoutPage :LayoutPage) :void
@@ -146,7 +131,7 @@ export class LayoutPageService implements OnInit, OnDestroy {
   }
 
   /*
-   * Replace the LayoutPage in the list whose 'id' matches
+   * Replace the LayoutPage in the list whose 'nsmr' matches
    * that of the provided one.
    * 
    * Return: the index of the updated LayoutPage or 'null'
@@ -168,15 +153,5 @@ export class LayoutPageService implements OnInit, OnDestroy {
       console.log(`LayoutPageService.updateLayoutPage(): LayoutPage.name = '${pPage.name}' not found; cannot update!`);
       return(null);
     }
-  }
-
-  /*
-   *  Save the newly-arrived Settings.
-   */
-  private updateSettings(pData :Settings) :void
-  {
-    console.log(`LayoutPageService.updateSettings(): Begins`)
-    this._settings = pData;
-    console.log(`LayoutPageService.updateSettings(): Ends`)    
   }
 }

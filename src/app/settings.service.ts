@@ -1,4 +1,4 @@
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable }         from '@angular/core';
 import { BehaviorSubject }    from 'rxjs/BehaviorSubject';
 import { Observable }         from 'rxjs/Observable';
 
@@ -6,7 +6,7 @@ import { CookieService }      from 'ngx-cookie';
 import { Settings }           from './models/settings';
 
 @Injectable()
-export class SettingsService implements OnInit {
+export class SettingsService {
 
   private _settingsCookieKey = "editorSettings";
   private _settings   :Settings;
@@ -14,15 +14,10 @@ export class SettingsService implements OnInit {
 
   constructor(private _cookieService :CookieService)
   {
-    this._settings = new Settings();
-    this._settings$ = <BehaviorSubject<Settings>>new BehaviorSubject(this._settings);  
-  }
-
-  ngOnInit()
-  {
-    console.log(`SettingsService.ngOnInit(): Begins`)
+    console.log(`SettingsService.constructor(): Begins`)
     this.loadSettingsFromCookie();
-    console.log(`SettingsService.ngOnInit(): Ends`)
+    this._settings$ = <BehaviorSubject<Settings>>new BehaviorSubject(this._settings);  
+    console.log(`SettingsService.constructor(): Ends`)
   }
 
   /*
@@ -47,7 +42,7 @@ export class SettingsService implements OnInit {
     }
     else
     {
-      this._settings = this._cookieService.getObject(this._settingsCookieKey) as Settings;
+      this._settings = new Settings;
       console.log(`SettingsService.loadSettingsFromCookie(): this._settings loaded from cookie: '${this._settings}'`)
     }
     console.log(`SettingsService.loadSettingsFromCookie(): Ends`)

@@ -1,4 +1,4 @@
-<mat-tab-group class="demo-tab-group"
+<mat-tab-group class="layout-tabs-group"
        [(selectedIndex)]="selectedTabIndex"
        (selectedTabChange)="onSelectedTabChanged($event)">
   <mat-tab *ngFor="let tab of layoutPages; let ix = index"  label="{{tab.name}}">

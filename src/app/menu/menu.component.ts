@@ -254,7 +254,7 @@ export class MenuComponent {
    */
   openEditSettingsDialog() :void
   {
-    let settingsList = this._settingsService.getSettings().getSettingsList;
+    let settingsList = this._settingsService.getSettingsList();
     let dialogRef = this._dialog.open(EditSettingsComponent,
                                       { width: '350px', maxHeight: '600px',
                                         data: settingsList 
@@ -264,7 +264,9 @@ export class MenuComponent {
       {
         console.log(`MenuComponent.openEditSettingsDialog.dialogRef.afterClosed(): result = '${result}'`);
         if (result)
-        { }
+        { 
+          
+        }
       });
   }
 }

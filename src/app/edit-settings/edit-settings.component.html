@@ -1,19 +1,25 @@
-<h2 mat-dialog-title>Edit Settings</h2>
+<h3 mat-dialog-title>Edit Settings</h3>
 
 <mat-dialog-content>
-  <ul>
-    <li *ngFor="let setting of settingsList">
+  <!-- <ul>
+    <li *ngFor="let item of settingsList">
       <div>
-        {{setting.name}}
-      </div>
-      <div>
-        {{setting.value}}
+        <span>{{item.name}}</span>
+        <span>{{item.value}}</span>
       </div>
     </li>
-  </ul>
+  </ul> -->
+
+  <div *ngFor="let item of settingsList">
+      <div>
+        <span>{{item.name}}</span>
+        <span>{{item.value}}</span>
+      </div>
+  </div>
+
 </mat-dialog-content>
 
 <mat-dialog-actions>
-  <button mat-button [mat-dialog-close]="true">Save</button>
+  <button mat-button mat-dialog-close>Save</button>
   <button mat-button mat-dialog-close>Cancel</button>
 </mat-dialog-actions>

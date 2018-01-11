@@ -29,6 +29,19 @@ export class SettingsService {
   }
 
   /*
+    *  Provide an iterable list of the setting names and their values.
+    */
+  public getSettingsList() :{name :string, value :string|number|boolean}[]
+  {
+      let sa :{name :string, value :string|number|boolean}[] = [];
+      sa.push({name: "defPageHeight",      value: this._settings.defPageHeight});
+      sa.push({name: "defPageWidth",       value: this._settings.defPageWidth});
+      sa.push({name: "defScale",           value: this._settings.defScale});
+      sa.push({name: "defConveyorWidthIn", value: this._settings.defConveyorWidthIn});
+      return sa;
+  }
+
+  /*
    *  Initialize the local copy of the editor settings from the
    *  cookie object or persist the current (default) settings.
    */
@@ -38,7 +51,7 @@ export class SettingsService {
     if (this._cookieService.get(this._settingsCookieKey))
     {
       this._settings = this._cookieService.getObject(this._settingsCookieKey) as Settings;
-      console.log(`SettingsService.loadSettingsFromCookie(): this._settings loaded from cookie: '${this._settings}'`)
+      console.log(`SettingsService.loadSettingsFromCookie(): this._settings loaded from cookie: '${JSON.stringify(this._settings)}'`)
     }
     else
     {
@@ -66,5 +79,36 @@ export class SettingsService {
     this._cookieService.putObject(this._settingsCookieKey, this._settings);
     this._settings$.next(this._settings);
     console.log(`SettingsService.updateSettings(): Ends`)
+  }
+
+  /*
+    *  Apply the values contained in the provided list of setting names/values
+    *  to the current settings.
+    */
+  public updateSettingsFromList(pSettingsList :{name :string, value :string|number|boolean}[]) :void
+  {
+    pSettingsList.forEach(setting =>
+      {
+        switch (setting.name)
+        {
+          case 'defPageHeight':
+            this._settings.defPageHeight = setting.value as number;
+            break;
+
+          case 'defPageWidth':
+            this._settings.defPageWidth = setting.value as number;
+            break;
+              
+          case 'defScale':
+            this._settings.defScale = setting.value as number;
+            break;
+              
+          case 'defConveyorWidthIn':
+            this._settings.defConveyorWidthIn = setting.value as number;
+            break;
+        }
+
+        this._settings$.next(this._settings);
+      });
   }
 }

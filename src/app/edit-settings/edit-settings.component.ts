@@ -19,8 +19,13 @@ export class EditSettingsComponent
     this.settingsList = data;
   }
 
-  closeDialog()
+  closeDialog() :void
   {
     this.dialogRef.close(this.settingsList);
+  }
+
+  onNoClick(): void
+  {
+    this.dialogRef.close();
   }
 }

@@ -16,46 +16,4 @@ export class Settings
         this.defScale           = pDefScale;
         this.defConveyorWidthIn = pDefConveyorWidthIn
     }
-
-    /*
-     *  Provide an iterable list of the setting names and their values.
-     */
-    public getSettingsList() :{name :string, value :string|number|boolean}[]
-    {
-        let sa :{name :string, value :string|number|boolean}[] = [];
-        sa.push({name: "defPageHeight",      value: this.defPageHeight});
-        sa.push({name: "defPageWidth",       value: this.defPageWidth});
-        sa.push({name: "defScale",           value: this.defScale});
-        sa.push({name: "defConveyorWidthIn", value: this.defConveyorWidthIn});
-        return sa;
-    }
-
-    /*
-     *  Apply the values contained in the provided list of setting names/values
-     *  to the current settings.
-     */
-    public applySettingsList(pSettingsList :{name :string, value :string|number|boolean}[]) :void
-    {
-        pSettingsList.forEach(setting =>
-            {
-                switch (setting.name)
-                {
-                    case 'defPageHeight':
-                        this.defPageHeight = setting.value as number;
-                        break;
-
-                    case 'defPageWidth':
-                        this.defPageWidth = setting.value as number;
-                        break;
-                        
-                    case 'defScale':
-                        this.defScale = setting.value as number;
-                        break;
-                        
-                    case 'defConveyorWidthIn':
-                        this.defConveyorWidthIn = setting.value as number;
-                        break;
-                }
-            });
-    }
 }

@@ -4,6 +4,7 @@ import { Observable }         from 'rxjs/Observable';
 
 import { CookieService }      from 'ngx-cookie';
 import { Settings }           from './models/settings';
+import { buildEditList }      from './globals/utilities/buildEditList';
 
 @Injectable()
 export class SettingsService {
@@ -29,17 +30,24 @@ export class SettingsService {
   }
 
   /*
-    *  Provide an iterable list of the setting names and their values.
-    */
-  public getSettingsList() :{name :string, value :string|number|boolean}[]
-  {
-      let sa :{name :string, value :string|number|boolean}[] = [];
-      sa.push({name: "defPageHeight",      value: this._settings.defPageHeight});
-      sa.push({name: "defPageWidth",       value: this._settings.defPageWidth});
-      sa.push({name: "defScale",           value: this._settings.defScale});
-      sa.push({name: "defConveyorWidthIn", value: this._settings.defConveyorWidthIn});
-      return sa;
-  }
+   *  Provide an iterable list of the setting names and their values.
+   */
+  // public getSettingsList() :{name :string, value :string|number|boolean}[]
+  // {
+  //     let sa :{name :string, value :string|number|boolean}[] = [];
+  //     sa.push({name: "defPageHeight",      value: this._settings.defPageHeight});
+  //     sa.push({name: "defPageWidth",       value: this._settings.defPageWidth});
+  //     sa.push({name: "defScale",           value: this._settings.defScale});
+  //     sa.push({name: "defConveyorWidthIn", value: this._settings.defConveyorWidthIn});
+  //     return sa;
+  // }
+  public getSettingsList() :{ name :string,
+                              value :string|number|boolean,
+                              isEditable :boolean
+                            }[]
+{
+    return buildEditList(this._settings, Settings.displayables);
+}
 
   /*
    *  Initialize the local copy of the editor settings from the

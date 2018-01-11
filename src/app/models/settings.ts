@@ -16,4 +16,14 @@ export class Settings
         this.defScale           = pDefScale;
         this.defConveyorWidthIn = pDefConveyorWidthIn
     }
+
+    public static get displayables() :{ name :string,
+                                        isEditable :boolean }[]
+    {
+        return [ { name: 'defPageHeight',      isEditable: true },
+                 { name: 'defPageWidth',       isEditable: true },
+                 { name: 'defScale',           isEditable: true },
+                 { name: 'defConveyorWidthIn', isEditable: true },
+        ]
+    }
 }

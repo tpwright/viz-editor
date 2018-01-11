@@ -64,16 +64,6 @@
             <span class=menu-item-label>Grow</span>
     </button>
   </mat-menu>
-    
-  <mat-menu #settingsMenu="matMenu">
-    <ng-container *ngFor='let item of settingsMenuItems'>
-      <button mat-menu-item *ngIf='item.label'
-              (click)="menuDispatch(item.id)">
-        <span class=menu-item-label>{{item.label}}</span>
-      </button>
-      <mat-divider *ngIf='!item.label'></mat-divider>
-    </ng-container>
-  </mat-menu>
 
   <mat-menu #helpMenu="matMenu">
     <button mat-menu-item

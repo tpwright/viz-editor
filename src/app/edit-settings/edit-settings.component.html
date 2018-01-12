@@ -1,19 +1,20 @@
 <h3 mat-dialog-title>Edit Settings</h3>
 
 <mat-dialog-content>
-  <div *ngFor='let item of settingsList'>
-    <div>
-      <span>Name: {{item.name}}&nbsp;&nbsp;</span>
-      <span>Value: {{item.value}}&nbsp;&nbsp;</span>
-      <span>IsEditable: {{item.isEditable}}</span>
-    </div>
-  </div>
+  <td-dynamic-forms [elements]="dynamicSettingsList">
+      <ng-template let-element ngFor [ngForOf]="dynamicSettingsList">
+        <ng-template let-control="control" [tdDynamicFormsError]="element.name">
+          <span *ngIf="control.touched || !control.pristine">
+            <!--Stolen from the example, not applied because there is no validation rule yet -->
+            <!-- <span *ngIf="control.hasError('even')">Must be even.</span>
+            <span *ngIf="control.hasError('odd')">Must be odd.</span>
+            <span *ngIf="control.hasError('min')">Must be greater than {{element.min}}.</span>
+            <span *ngIf="control.hasError('max')">Must be less than {{element.max}}.</span> -->
+          </span>
+        </ng-template>
+      </ng-template>
+    </td-dynamic-forms>
 
-  <div *ngFor='let item of settingsList'>
-    <mat-form-field>
-          <input matInput placeholder={{item.name}}>
-    </mat-form-field>    
-  </div>
 </mat-dialog-content>
 
 <mat-dialog-actions>

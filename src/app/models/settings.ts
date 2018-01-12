@@ -1,9 +1,17 @@
-export class Settings
+import { IEditListClass }       from '../interfaces/i-edit-list-class';
+
+export class Settings implements IEditListClass
 {
     public defPageHeight        :number;    // Default Layout Page height: pixels
     public defPageWidth         :number;    // Default Layout Page width: pixels
     public defScale             :number;    // Default equipment scale: px/inch
     public defConveyorWidthIn   :number;    // Default conveyor width: inches
+
+    private _deployableProperties = [ { name: 'defPageHeight',      isEditable: true },
+                                      { name: 'defPageWidth',       isEditable: true },
+                                      { name: 'defScale',           isEditable: true },
+                                      { name: 'defConveyorWidthIn', isEditable: true },
+                                    ];
 
     constructor ( pDefPageHeight      :number = 600,
                   pDefPageWidth       :number = 1200,
@@ -17,13 +25,8 @@ export class Settings
         this.defConveyorWidthIn = pDefConveyorWidthIn
     }
 
-    public static get displayables() :{ name :string,
-                                        isEditable :boolean }[]
+    public getDisplayableProperties() :{ name :string, isEditable :boolean }[]
     {
-        return [ { name: 'defPageHeight',      isEditable: true },
-                 { name: 'defPageWidth',       isEditable: true },
-                 { name: 'defScale',           isEditable: true },
-                 { name: 'defConveyorWidthIn', isEditable: true },
-               ];
+        return this._deployableProperties;
     }
 }

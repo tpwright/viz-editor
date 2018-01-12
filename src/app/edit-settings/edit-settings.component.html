@@ -7,9 +7,12 @@
       <span>Value: {{item.value}}&nbsp;&nbsp;</span>
       <span>IsEditable: {{item.isEditable}}</span>
     </div>
-    <!-- <mat-form-field>
+</div>
+
+<div *ngFor='let item of settingsList'>
+  <mat-form-field>
         <input matInput [placeholder]=item.name>
-    </mat-form-field>     -->
+    </mat-form-field>    
   </div>
 </mat-dialog-content>
 

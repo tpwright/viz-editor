@@ -1,6 +1,7 @@
 import { Component, Inject }                        from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
+import { IEditListItem }                            from '../interfaces/i-edit-list-item';
 import { Settings }                                 from '../models/settings';
 
 @Component({
@@ -11,14 +12,10 @@ import { Settings }                                 from '../models/settings';
 export class EditSettingsComponent
 {
 
-  public settingsList :{name       :string,
-                        value      :string|number|boolean,
-                        isEditable :boolean}[];
+  public settingsList :IEditListItem[];
 
   constructor(public dialogRef :MatDialogRef<EditSettingsComponent>,
-              @Inject(MAT_DIALOG_DATA) public data :{ name       :string,
-                                                      value      :string|number|boolean,
-                                                      isEditable :boolean }[])
+              @Inject(MAT_DIALOG_DATA) public data :IEditListItem[])
   {
     this.settingsList = data;
   }

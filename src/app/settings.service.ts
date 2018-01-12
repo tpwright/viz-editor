@@ -1,8 +1,10 @@
 import { Injectable }         from '@angular/core';
+
 import { BehaviorSubject }    from 'rxjs/BehaviorSubject';
 import { Observable }         from 'rxjs/Observable';
-
 import { CookieService }      from 'ngx-cookie';
+
+import { IEditListItem }      from './interfaces/i-edit-list-item';
 import { Settings }           from './models/settings';
 import { buildEditList }      from './globals/utilities/buildEditList';
 
@@ -32,13 +34,10 @@ export class SettingsService {
   /*
    *  Provide an iterable list of the setting names and their values.
    */
-  public getSettingsList() :{ name       :string,
-                              value      :string|number|boolean,
-                              isEditable :boolean
-                            }[]
-{
-    return buildEditList(this._settings, Settings.displayables);
-}
+  public getSettingsList() :IEditListItem[]
+  {
+    return buildEditList(this._settings);
+  }
 
   /*
    *  Initialize the local copy of the editor settings from the
@@ -92,8 +91,7 @@ export class SettingsService {
     *  Apply the values contained in the provided list of setting names/values
     *  to the current settings.
     */
-  public updateSettingsFromList(pSettingsList :{ name  :string,
-                                                 value :string|number|boolean }[]) :void
+  public updateSettingsFromList(pSettingsList :IEditListItem[]) :void
   {
     pSettingsList.forEach(setting =>
       {

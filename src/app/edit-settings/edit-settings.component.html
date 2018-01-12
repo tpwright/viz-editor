@@ -11,7 +11,7 @@
 
 <div *ngFor='let item of settingsList'>
   <mat-form-field>
-        <input matInput [placeholder]=item.name>
+        <input matInput [placeholder]=item.name ([value])=item.value>
     </mat-form-field>    
   </div>
 </mat-dialog-content>

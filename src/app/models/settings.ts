@@ -7,11 +7,11 @@ export class Settings implements IEditListClass
     public defScale             :number;    // Default equipment scale: px/inch
     public defConveyorWidthIn   :number;    // Default conveyor width: inches
 
-    private _deployableProperties = [ { name: 'defPageHeight',      isEditable: true },
-                                      { name: 'defPageWidth',       isEditable: true },
-                                      { name: 'defScale',           isEditable: true },
-                                      { name: 'defConveyorWidthIn', isEditable: true },
-                                    ];
+    readonly displayableProperties =  [ { name: 'defPageHeight',      isEditable: true },
+                                        { name: 'defPageWidth',       isEditable: true },
+                                        { name: 'defScale',           isEditable: true },
+                                        { name: 'defConveyorWidthIn', isEditable: true },
+                                      ];
 
     constructor ( pDefPageHeight      :number = 600,
                   pDefPageWidth       :number = 1200,
@@ -23,10 +23,5 @@ export class Settings implements IEditListClass
         this.defPageWidth       = pDefPageWidth;
         this.defScale           = pDefScale;
         this.defConveyorWidthIn = pDefConveyorWidthIn
-    }
-
-    public getDisplayableProperties() :{ name :string, isEditable :boolean }[]
-    {
-        return this._deployableProperties;
     }
 }

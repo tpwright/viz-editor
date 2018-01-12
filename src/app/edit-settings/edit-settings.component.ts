@@ -11,10 +11,14 @@ import { Settings }                                 from '../models/settings';
 export class EditSettingsComponent
 {
 
-  public settingsList :{name :string, value :string|number|boolean}[];
+  public settingsList :{name       :string,
+                        value      :string|number|boolean,
+                        isEditable :boolean}[];
 
   constructor(public dialogRef :MatDialogRef<EditSettingsComponent>,
-              @Inject(MAT_DIALOG_DATA) public data :{name :string, value :string|number|boolean}[])
+              @Inject(MAT_DIALOG_DATA) public data :{ name       :string,
+                                                      value      :string|number|boolean,
+                                                      isEditable :boolean }[])
   {
     this.settingsList = data;
   }

@@ -1,15 +1,16 @@
 /*
- *  Create a list of propertiesof object 'obj' for use by the
- *  ObjectPropertyEditorComponent. The provided 'disp' is an
- *  array containing an entry for each property that may be
- *  displayed, consisting of the property 'name' and the flag
- *  'isEditable' indicating whether the editor should allow
- *  the property to be edited.
+ *  Create a list of properties of object 'obj' for use by
+ *  the ObjectPropertyEditorComponent. The provided 'disp'
+ *  is an array containing an entry for each property that
+ *  may be displayed, consisting of the property 'name' and
+ *  the flag 'isEditable' which indicates to the editor if
+ *  the property may be edited or only displayed.
  *
- *  The return value is an array containing and entry for each
+ *  The return value is an array containing an entry for each
  *  of the 'obj' properties that may be displayed, consisting
  *  of the property name, the current 'value' of that property,
- *  and whether the property 'isEditable'
+ *  and 'isEditable', indicating whether the property may be
+ *  edited.
  */
 export function buildEditList(obj  :object,
                               disp :{ name :string,
@@ -26,24 +27,18 @@ export function buildEditList(obj  :object,
                     value :string|number|boolean,
                     isEditable :boolean
                   }[] = [];
-        
-        // Let's get the names of the object's properties
-        let propNames = Object.getOwnPropertyNames(obj);
 
-        // Examine each of obj's properties
-        for (let [key, value] of Object.entries(obj))
-        {
-            // See if this property's name is in the list of displayable properties
-            for (let [name, dvals] of Object(disp))
-            {
-                if (name == propNames[key])         // This property is a displayable
-                {
-                    list.push({ name: key, value: value, isEditable: dvals.isEditable})
-                }
-                break;
-            }
-        }
-        return list;
+        // Process each entry in the list of displayable properties
+        disp.forEach(function(dp)
+                        {            
+                            if(obj[dp.name])
+                            {
+                                list.push({name         :dp.name,
+                                           value        :obj[dp.name],
+                                           isEditable   :dp.isEditable});
+                            }
+                        });
+    return list;
     }
 }
   

@@ -32,17 +32,8 @@ export class SettingsService {
   /*
    *  Provide an iterable list of the setting names and their values.
    */
-  // public getSettingsList() :{name :string, value :string|number|boolean}[]
-  // {
-  //     let sa :{name :string, value :string|number|boolean}[] = [];
-  //     sa.push({name: "defPageHeight",      value: this._settings.defPageHeight});
-  //     sa.push({name: "defPageWidth",       value: this._settings.defPageWidth});
-  //     sa.push({name: "defScale",           value: this._settings.defScale});
-  //     sa.push({name: "defConveyorWidthIn", value: this._settings.defConveyorWidthIn});
-  //     return sa;
-  // }
-  public getSettingsList() :{ name :string,
-                              value :string|number|boolean,
+  public getSettingsList() :{ name       :string,
+                              value      :string|number|boolean,
                               isEditable :boolean
                             }[]
 {
@@ -69,6 +60,14 @@ export class SettingsService {
     console.log(`SettingsService.loadSettingsFromCookie(): Ends`)
   }
 
+  public restoreDefaultSettings() :void
+  {
+    console.log(`SetingsService.restoreDefaultSettings(): Begins`);
+    this._settings = new Settings();
+    this._settings$.next(this._settings);
+    console.log(`SetingsService.restoreDefaultSettings(): Ends`);
+  }
+
   /*
    *  Return: Observable that delivers Settings changes.
    */
@@ -93,7 +92,8 @@ export class SettingsService {
     *  Apply the values contained in the provided list of setting names/values
     *  to the current settings.
     */
-  public updateSettingsFromList(pSettingsList :{name :string, value :string|number|boolean}[]) :void
+  public updateSettingsFromList(pSettingsList :{ name  :string,
+                                                 value :string|number|boolean }[]) :void
   {
     pSettingsList.forEach(setting =>
       {

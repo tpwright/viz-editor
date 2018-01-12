@@ -24,6 +24,6 @@ export class Settings
                  { name: 'defPageWidth',       isEditable: true },
                  { name: 'defScale',           isEditable: true },
                  { name: 'defConveyorWidthIn', isEditable: true },
-        ]
+               ];
     }
 }

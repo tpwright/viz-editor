@@ -256,7 +256,7 @@ export class MenuComponent {
   {
     let settingsList = this._settingsService.getSettingsList();
     let dialogRef = this._dialog.open(EditSettingsComponent,
-                                      { width: '350px', maxHeight: '600px',
+                                      { minWidth: '350px', maxHeight: '600px',
                                         data: settingsList 
                                       });
 

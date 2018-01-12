@@ -60,7 +60,7 @@ export class EditSettingsComponent
     let rVal : ITdDynamicElementConfig[] = [];
     
     obj.forEach(element => {
-      rVal.push({name: element.name, label: element.name, type: TdDynamicType.Number});
+      rVal.push({name: element.name, label: element.name, type: TdDynamicType.Number, default: element.value});
       
     });
 

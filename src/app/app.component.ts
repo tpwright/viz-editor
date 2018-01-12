@@ -61,7 +61,7 @@ export class AppComponent implements OnInit, AfterViewInit {
                 `pEvent.shiftKey='${pEvent.shiftKey}'`);
     if (pEvent.cancelable)
     {
-      pEvent.preventDefault();
+     // pEvent.preventDefault();
     }
   }
 }

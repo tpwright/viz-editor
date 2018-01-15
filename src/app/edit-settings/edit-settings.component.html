@@ -1,7 +1,7 @@
 <h3 mat-dialog-title>Edit Settings</h3>
 
 <mat-dialog-content>
-  <td-dynamic-forms [elements]="dynamicSettingsList">
+  <td-dynamic-forms [elements]="dynamicSettingsList" #dynamicForm>
       <ng-template let-element ngFor [ngForOf]="dynamicSettingsList">
         <ng-template let-control="control" [tdDynamicFormsError]="element.name">
           <span *ngIf="control.touched || !control.pristine">
@@ -18,6 +18,6 @@
 </mat-dialog-content>
 
 <mat-dialog-actions>
-  <button mat-button mat-dialog-close>Save</button>
+  <button mat-button (click)= "save(dynamicForm)">Save</button>
   <button mat-button mat-dialog-close>Cancel</button>
 </mat-dialog-actions>

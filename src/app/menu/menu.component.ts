@@ -265,7 +265,7 @@ export class MenuComponent {
         console.log(`MenuComponent.openEditSettingsDialog.dialogRef.afterClosed(): result = '${result}'`);
         if (result)
         { 
-          
+          this._settingsService.updateSettings(result);
         }
       });
   }

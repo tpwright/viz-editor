@@ -27,16 +27,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   { }
 
   ngOnInit()
-  {
-    // If the cookie used to persist the editor's settings does not
-    // exist, create the cookie using the default settings values.
-    const settingsKey = "editorSettings";
-    if (!this._cookieService.get(settingsKey))
-    {
-      let settings = new Settings();    // Used default settings values
-      this._cookieService.putObject(settingsKey, settings);
-      console.log(`AppComponent.ngOnInit(): 'settings' cookie created: ${settings}`);
-    }
+  { 
+    this._cookieService.removeAll();      // Temporary
   }
  
   ngAfterViewInit()
@@ -61,7 +53,7 @@ export class AppComponent implements OnInit, AfterViewInit {
                 `pEvent.shiftKey='${pEvent.shiftKey}'`);
     if (pEvent.cancelable)
     {
-      pEvent.preventDefault();
+      // pEvent.preventDefault();
     }
   }
 }

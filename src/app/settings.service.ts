@@ -12,13 +12,13 @@ import { buildEditList }      from './globals/utilities/buildEditList';
 export class SettingsService {
 
   private _settingsCookieKey = "editorSettings";
-  private _settings   :Settings;
+  private _settings   :Settings = new Settings();
   private _settings$  :BehaviorSubject<Settings>;
 
   constructor(private _cookieService :CookieService)
   {
     console.log(`SettingsService.constructor(): Begins`)
-    this.loadSettingsFromCookie();
+    // this.loadSettingsFromCookie();
     this._settings$ = <BehaviorSubject<Settings>>new BehaviorSubject(this._settings);  
     console.log(`SettingsService.constructor(): Ends`)
   }
@@ -51,19 +51,19 @@ export class SettingsService {
       this._settings = new Settings();
       
       let settingsObj = JSON.parse(this._cookieService.get(this._settingsCookieKey));
-      console.log(`SettingsService.loadSettingsFromCookie(): this._settings = '${JSON.stringify(this._settings)}'`)// settingsObj.foreach(prop =>
-      //   {
-      //     settings[prop.name] = settings[prop.value];
-      //   });
-
-      // console.log(`SettingsService.loadSettingsFromCookie(): this._settings loaded from cookie: '${JSON.stringify(this._settings)}'`);
+      console.log(`SettingsService.loadSettingsFromCookie(): settingsObj = '${JSON.stringify(settingsObj)}'`)
+      settingsObj.array.forEach(setting =>
+        {
+          this._settings[setting.name] = setting .value;
+        });
+      console.log(`SettingsService.loadSettingsFromCookie(): this._settings loaded from cookie`);
     }
     else
     {
-      this._settings = new Settings();;
-      console.log(`SettingsService.loadSettingsFromCookie(): this._settings initialized to default`)
+      console.log(`SettingsService.loadSettingsFromCookie(): no cookie found`)
     }
-    console.log(`SettingsService.loadSettingsFromCookie(): Ends`)
+    
+    console.log(`SettingsService.loadSettingsFromCookie(): Ends; this._settings ='${JSON.stringify(this._settings)}'`)
   }
 
   public restoreDefaultSettings() :void
@@ -102,28 +102,13 @@ export class SettingsService {
     */
   public updateSettingsFromList(pSettingsList :IEditListItem[]) :void
   {
+    console.log(`SettingsService.updateSettingsFromList(): Begins; pSettingsList.length='${pSettingsList.length}'`);
     pSettingsList.forEach(setting =>
       {
-        switch (setting.name)
-        {
-          case 'defPageHeight':
-            this._settings.defPageHeight = setting.value as number;
-            break;
-
-          case 'defPageWidth':
-            this._settings.defPageWidth = setting.value as number;
-            break;
-              
-          case 'defScale':
-            this._settings.defScale = setting.value as number;
-            break;
-              
-          case 'defConveyorWidthIn':
-            this._settings.defConveyorWidthIn = setting.value as number;
-            break;
-        }
-
-        this._settings$.next(this._settings);
+        this._settings[setting.name] = setting.value;
       });
+
+    this._settings$.next(this._settings);
+    console.log(`SettingsService.updateSettingsFromList(): Ends; this._settings='${JSON.stringify(this._settings)}'`);
   }
 }

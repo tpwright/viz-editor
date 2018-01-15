@@ -10,28 +10,28 @@ export function buildEditList(obj :IEditListClass) :IEditListItem[]
     console.log(`buildEditList(): Begins`);
     if (obj)
     {
-        let dpExists = (obj.displayableProperties != null && obj.displayableProperties != undefined);
-        console.log(`buildEditList(): obj exists and obj.displayableProperties exists = ${dpExists}`);
+        console.log(`buildEditList(): obj = '${JSON.stringify(obj)}'`);
+
+        let editList :IEditListItem[] = [];
+
+        // Process each entry in the list of displayable properties
+        obj.getDisplayableProperties().forEach(dp =>
+            { 
+                if(obj[dp.name])
+                {
+                    editList.push({ name         :dp.name,
+                                    value        :obj[dp.name],
+                                    isEditable   :dp.isEditable });
+                }
+            });
+
+        console.log(`buildEditList(): Ends; editList = ${JSON.stringify(editList)}`);
+        return editList;
     }
     else
     {
-        console.log(`buildEditList(): obj DOES NOT exist!`);
+        console.log(`buildEditList(): Ends; 'obj' DOES NOT exist!`);
+        return null;
     }
-
-    let editList :IEditListItem[] = [];
-
-    // Process each entry in the list of displayable properties
-    obj.displayableProperties.forEach(dp =>
-        { 
-            if(obj[dp.name])
-            {
-                editList.push({ name         :dp.name,
-                                value        :obj[dp.name],
-                                isEditable   :dp.isEditable });
-            }
-        });
-        
-    console.log(`buildEditList(): Ends; editList.length = ${editList.length}`);
-    return editList;
 }
   

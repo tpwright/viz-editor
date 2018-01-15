@@ -1,6 +1,7 @@
 import { Component, ViewEncapsulation }             from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
+import { IEditListItem }                            from '../interfaces/i-edit-list-item';
 import { EditSettingsComponent }                    from '../edit-settings/edit-settings.component';
 import { LayoutTabsComponent }                      from '../layout-tabs/layout-tabs.component';
 import { Settings }                                 from '../models/settings';
@@ -267,10 +268,10 @@ export class MenuComponent {
 
     dialogRef.afterClosed().subscribe(result =>
       {
-        console.log(`MenuComponent.openEditSettingsDialog.dialogRef.afterClosed(): result = '${result}'`);
+        console.log(`MenuComponent.openEditSettingsDialog.dialogRef.afterClosed(): result = '${JSON.stringify(result)}'`);
         if (result)
-        { 
-          
+        {
+          this._settingsService.updateSettingsFromList(result);
         }
       });
   }

@@ -1,4 +1,4 @@
 export interface IEditListClass 
 {
-    readonly displayableProperties :{ name :string, isEditable :boolean }[];
+    getDisplayableProperties() :{ name :string, isEditable :boolean }[];
 }

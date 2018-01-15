@@ -18,7 +18,7 @@ export class SettingsService {
   constructor(private _cookieService :CookieService)
   {
     console.log(`SettingsService.constructor(): Begins`)
-    // this.loadSettingsFromCookie();
+    this.loadSettingsFromCookie();
     this._settings$ = <BehaviorSubject<Settings>>new BehaviorSubject(this._settings);  
     console.log(`SettingsService.constructor(): Ends`)
   }
@@ -61,6 +61,8 @@ export class SettingsService {
     else
     {
       console.log(`SettingsService.loadSettingsFromCookie(): no cookie found`)
+      this._cookieService.put(this._settingsCookieKey, JSON.stringify(this._settings));
+      console.log(`SettingsService.loadSettingsFromCookie(): new cookie created`)
     }
     
     console.log(`SettingsService.loadSettingsFromCookie(): Ends; this._settings ='${JSON.stringify(this._settings)}'`)

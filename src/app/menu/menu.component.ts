@@ -189,6 +189,11 @@ export class MenuComponent {
       case "mainMenu_stepDefaultScale":
         this.layoutTabsComponent.stepDefaultScale();
         break;
+      
+      case "mainMenu_resetSettings":
+        this._settingsService.restoreDefaultSettings();
+        console.log(`MenuComponent.menuDispatch(): this._settingsService.restore.DefaultSettings() invoked`)
+        break;
 
       case "rotateMenu_+1":
         break;

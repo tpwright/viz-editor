@@ -48,13 +48,20 @@ export class SettingsService {
     console.log(`SettingsService.loadSettingsFromCookie(): Begins`)
     if (this._cookieService.get(this._settingsCookieKey))
     {
-      this._settings = this._cookieService.getObject(this._settingsCookieKey) as Settings;
-      console.log(`SettingsService.loadSettingsFromCookie(): this._settings loaded from cookie: '${JSON.stringify(this._settings)}'`)
+      this._settings = new Settings();
+      
+      let settingsObj = JSON.parse(this._cookieService.get(this._settingsCookieKey));
+      console.log(`SettingsService.loadSettingsFromCookie(): this._settings = '${JSON.stringify(this._settings)}'`)// settingsObj.foreach(prop =>
+      //   {
+      //     settings[prop.name] = settings[prop.value];
+      //   });
+
+      // console.log(`SettingsService.loadSettingsFromCookie(): this._settings loaded from cookie: '${JSON.stringify(this._settings)}'`);
     }
     else
     {
-      this._settings = new Settings;
-      console.log(`SettingsService.loadSettingsFromCookie(): this._settings loaded from cookie: '${this._settings}'`)
+      this._settings = new Settings();;
+      console.log(`SettingsService.loadSettingsFromCookie(): this._settings initialized to default`)
     }
     console.log(`SettingsService.loadSettingsFromCookie(): Ends`)
   }
@@ -62,8 +69,9 @@ export class SettingsService {
   public restoreDefaultSettings() :void
   {
     console.log(`SetingsService.restoreDefaultSettings(): Begins`);
-    this._settings = new Settings();
-    this._settings$.next(this._settings);
+    this.updateSettings(new Settings());
+
+    console.log(`SettingsService.restoreDefaultSettings(): cookie = '${this._cookieService.get(this._settingsCookieKey)}'`)
     console.log(`SetingsService.restoreDefaultSettings(): Ends`);
   }
 
@@ -82,7 +90,8 @@ export class SettingsService {
   {
     console.log(`SettingsService.updateSettings(): Begins; pSettings = '${pSettings}'`)
     this._settings = pSettings;
-    this._cookieService.putObject(this._settingsCookieKey, this._settings);
+    // this._cookieService.putObject(this._settingsCookieKey, this._settings);
+    this._cookieService.put(this._settingsCookieKey, JSON.stringify(this._settings));
     this._settings$.next(this._settings);
     console.log(`SettingsService.updateSettings(): Ends`)
   }

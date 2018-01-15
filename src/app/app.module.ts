@@ -16,6 +16,7 @@ import { EditSettingsComponent }    from './edit-settings/edit-settings.componen
 import { LayoutPageService }        from './layout-page.service';
 import { LayoutTabsComponent }      from './layout-tabs/layout-tabs.component';
 import { MatFormFieldModule }       from '@angular/material/form-field';
+import { MatInputModule}            from '@angular/material/input';
 import { MenuComponent }            from './menu/menu.component';
 import { SettingsService }          from './settings.service';
 import { StatusItemListComponent }  from './status-item-list/status-item-list.component';
@@ -36,11 +37,13 @@ import { StatusItemService }        from './status-item.service';
     BrowserAnimationsModule,
     CookieModule.forRoot(),
     MatFormFieldModule,
+    MatInputModule,
     MatMenuModule,
     MatDialogModule,
     MatToolbarModule,
     MatIconModule,
     MatListModule,
+    
   ],
   entryComponents: [
     ConfirmDialogComponent,

@@ -45,12 +45,20 @@ export class SettingsService {
    */
   private loadSettingsFromCookie() :void
   {
-    console.log(`SettingsService.loadSettingsFromCookie(): Begins`)
-    let settingsObj = JSON.parse(this._cookieService.get(this._settingsCookieKey));
+    console.log(`SettingsService.loadSettingsFromCookie(): Begins`);
+
+    let settingsObj;
+    
+    let cookieData = this._cookieService.get(this._settingsCookieKey);
+    if (cookieData)
+    {
+      console.log(`SettingsService.loadSettingsFromCookie(): cookieData = '${cookieData}'`);
+      settingsObj = JSON.parse(cookieData);
+    }
 
     if (settingsObj)
     {
-      console.log(`SettingsService.loadSettingsFromCookie(): settingsObj = '${JSON.stringify(settingsObj)}'`)
+      console.log(`SettingsService.loadSettingsFromCookie(): settingsObj = '${JSON.stringify(settingsObj)}'`);
         for (let ix = 0; ix < Object.entries(settingsObj).length; ix++)
         {
           let item = Object.entries(settingsObj)[ix];
@@ -61,10 +69,10 @@ export class SettingsService {
     }
     else
     {
-      console.log(`SettingsService.loadSettingsFromCookie(): Settings cookie not found`)
+      console.log(`SettingsService.loadSettingsFromCookie(): Settings cookie not found`);
       // The current this._settings is assumed to contain the default settings
       this._cookieService.put(this._settingsCookieKey, JSON.stringify(this._settings));
-      console.log(`SettingsService.loadSettingsFromCookie(): new cookie created`)
+      console.log(`SettingsService.loadSettingsFromCookie(): new cookie created`);
     }
     
     console.log(`SettingsService.loadSettingsFromCookie(): Ends; this._settings ='${JSON.stringify(this._settings)}'`)

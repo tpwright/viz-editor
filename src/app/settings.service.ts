@@ -105,7 +105,6 @@ export class SettingsService {
   {
     console.log(`SettingsService.updateSettings(): Begins; pSettings = '${pSettings}'`)
     this._settings = pSettings;
-    // this._cookieService.putObject(this._settingsCookieKey, this._settings);
     this._cookieService.put(this._settingsCookieKey, JSON.stringify(this._settings));
     this._settings$.next(this._settings);
     console.log(`SettingsService.updateSettings(): Ends`)

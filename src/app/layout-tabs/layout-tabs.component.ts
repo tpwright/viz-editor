@@ -1,15 +1,18 @@
-import { Component, ViewEncapsulation }     from '@angular/core';
-import { OnInit, OnDestroy }                from '@angular/core';
-import { MatTabsModule, MatTabChangeEvent } from '@angular/material/tabs';
-import { Subscription }                     from 'rxjs/Subscription';
+import { Component, ViewEncapsulation }             from '@angular/core';
+import { OnInit, OnDestroy }                        from '@angular/core';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatTabsModule, MatTabChangeEvent }         from '@angular/material/tabs';
+import { Subscription }                             from 'rxjs/Subscription';
 
-import { ConfirmDialogComponent }           from '../confirm-dialog/confirm-dialog.component';
-import { LayoutPage }                       from '../models/layout-page';
-import { LayoutPageService }                from '../layout-page.service';
-import { Settings }                         from '../models/settings';
-import { SettingsService }                  from '../settings.service';
-import { StatusItem }                       from '../status-item';
-import { StatusItemService }                from '../status-item.service';
+import { buildEditList }                            from '../globals/utilities/buildEditList';
+import { EditPropertiesComponent }                  from '../edit-properties/edit-properties.component';
+import { LayoutPage }                               from '../models/layout-page';
+import { LayoutPageService }                        from '../layout-page.service';
+import { Settings }                                 from '../models/settings';
+import { SettingsService }                          from '../settings.service';
+import { StatusItem }                               from '../status-item';
+import { StatusItemService }                        from '../status-item.service';
+import { IEditListItem } from '../interfaces/i-edit-list-item';
 
 @Component({
   selector: 'app-layout-tabs',
@@ -28,7 +31,8 @@ export class LayoutTabsComponent implements OnInit, OnDestroy {
   public  layoutPages             :LayoutPage[];
   public  selectedTabIndex        :number = 0;
 
-  constructor( private _layoutPageService :LayoutPageService,
+  constructor( private _dialog            :MatDialog,
+               private _layoutPageService :LayoutPageService,
                private _settingsService   :SettingsService,
                private _statusItemService :StatusItemService )
   { }
@@ -99,6 +103,42 @@ export class LayoutTabsComponent implements OnInit, OnDestroy {
     }
     console.log(`LayoutTabsComponent.deleteLayoutPage(): Ends`);
   }
+
+  /*
+   * Open the EditProperties dialog using the active LayoutPage
+   * properties list. If the dialog is successfully completed,
+   * the new property values are used to update those of the
+   * active LayoutPage.
+   */
+  public editLayoutPage() :void
+  {
+    let activePage = this.layoutPages[this.selectedTabIndex];
+    let origName = activePage.name;
+    let dispProps = activePage.getDisplayableProperties();
+    let propsList = buildEditList(activePage);
+    let dialogRef = this._dialog.open(EditPropertiesComponent,
+                                      { minWidth: '350px', maxHeight: '600px',
+                                        data: propsList 
+                                      });
+
+    dialogRef.afterClosed().subscribe(result =>
+      {
+        console.log(`LayoutTabsComponent.editLayoutPage.dialogRef.afterClosed(): Begins; result = '${JSON.stringify(result)}'`);
+        if (result)
+        {
+          // 'result' is 'propsList' but now containing the edited values
+          let resultList = result as IEditListItem[];
+          resultList.forEach(prop =>
+            {
+              activePage[prop.name] = prop.value;
+            });
+
+          this._layoutPageService.updateLayoutPage(origName, activePage);
+          console.log(`LayoutTabsComponent.editLayoutPage.dialogRef.afterClosed(): Ends`);
+       }
+      });
+  }
+
 
   /*
    *  Initialize an empty LayoutPage

@@ -2,7 +2,7 @@ import { Component, ViewEncapsulation }             from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 import { IEditListItem }                            from '../interfaces/i-edit-list-item';
-import { EditSettingsComponent }                    from '../edit-settings/edit-settings.component';
+import { EditPropertiesComponent }                  from '../edit-properties/edit-properties.component';
 import { LayoutTabsComponent }                      from '../layout-tabs/layout-tabs.component';
 import { Settings }                                 from '../models/settings';
 import { SettingsService }                          from '../settings.service';
@@ -20,9 +20,9 @@ export class MenuComponent {
                private _settingsService :SettingsService )
   { }
 
-  layoutTabsComponent :LayoutTabsComponent;   // Set by AppComponent
+  layoutTabsComponent :LayoutTabsComponent;           // Set by AppComponent
 
-  public selectedMenuItem :string;                   // The label of the selected menu item
+  public selectedMenuItem :string;                    // The label of the selected menu item
 
   public alignMenuItems = [
     { id: 'alignMenu_Left',     label: 'Left'   },
@@ -35,13 +35,14 @@ export class MenuComponent {
   ];
 
   public editMenuItems = [
-    { id: 'editMenu_Copy',      label: 'Copy'     },
-    { id: 'editMenu_Paste',     label: 'Paste'    },
-    { id: 'editMenu_Sep1',      label: null       },
-    { id: 'editMenu_Cut',       label: 'Cut'      },
-    { id: 'editMenu_Delete',    label: 'Delete'   },
-    { id: 'editMenu_Sep2',      label: null       },
-    { id: 'editMenu_Settings',  label: 'Settings' }
+    { id: 'editMenu_Copy',       label: 'Copy'       },
+    { id: 'editMenu_Paste',      label: 'Paste'      },
+    { id: 'editMenu_Sep1',       label: null         },
+    { id: 'editMenu_Cut',        label: 'Cut'        },
+    { id: 'editMenu_Delete',     label: 'Delete'     },
+    { id: 'editMenu_Sep2',       label: null         },
+    { id: 'editMenu_Settings',   label: 'Settings'   },
+    { id: 'editMenu_LayoutPage', label: 'Layout Page'}
   ];
   
   public fileMenuItems = [
@@ -126,17 +127,21 @@ export class MenuComponent {
       case "editMenu_Copy":
         break;
 
-      case "editMenu_Paste":
-        break;
-
       case "editMenu_Cut":
-        break;
-      
-      case "editMenu_Settings":
-        this.openEditSettingsDialog();
         break;
 
       case "editMenu_Delete":
+        break;
+
+      case "editMenu_Paste":
+        break;
+      
+      case "editMenu_LayoutPage":
+        this.layoutTabsComponent.editLayoutPage();
+        break;
+
+      case "editMenu_Settings":
+        this.openEditSettingsDialog();
         break;
 
       case "fileMenu_New":
@@ -253,26 +258,29 @@ export class MenuComponent {
   }
 
   /*
-   * Open the EditSettings dialog using the settings we retrieve
-   * from the CookieService. If the dialog is successfully
-   * completed, the updated settings values are used to
-   * update those maintained by the CookieService.
+   * Open the EditProperties dialog using the settings we
+   * retrieve from the SettingsService. If the dialog is
+   * successfully completed, the updated settings values
+   * are used to update the current settings, as maintained
+   * by the SettingsService.
    */
   openEditSettingsDialog() :void
   {
     let settingsList = this._settingsService.getSettingsList();
-    let dialogRef = this._dialog.open(EditSettingsComponent,
+    let dialogRef = this._dialog.open(EditPropertiesComponent,
                                       { minWidth: '350px', maxHeight: '600px',
                                         data: settingsList 
                                       });
 
     dialogRef.afterClosed().subscribe(result =>
       {
-        console.log(`MenuComponent.openEditSettingsDialog.dialogRef.afterClosed(): result = '${JSON.stringify(result)}'`);
+        console.log(`MenuComponent.openEditSettingsDialog.dialogRef.afterClosed(): Begins; result = '${JSON.stringify(result)}'`);
         if (result)
         {
           this._settingsService.updateSettingsFromList(result);
         }
+
+        console.log(`MenuComponent.openEditSettingsDialog.dialogRef.afterClosed(): Ends`);
       });
   }
 }

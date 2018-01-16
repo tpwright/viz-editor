@@ -19,6 +19,9 @@ export class Settings implements IEditListClass
         this.defConveyorWidthIn = pDefConveyorWidthIn
     }
 
+    /*
+     *  Return the list of displayable properties for this class.
+     */
     public getDisplayableProperties()
     {
         return  [ { name: 'defPageHeight',      isEditable: true },

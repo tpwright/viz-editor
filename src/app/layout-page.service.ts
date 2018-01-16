@@ -131,20 +131,20 @@ export class LayoutPageService {
   }
 
   /*
-   * Replace the LayoutPage in the list whose 'nsmr' matches
-   * that of the provided one.
+   * Replace the LayoutPage in the list whose 'name' matches
+   * that specified by pPageName.
    * 
    * Return: the index of the updated LayoutPage or 'null'
    *         if it was not found.
    */
-  public updateLayoutPage(pPage :LayoutPage) :number
+  public updateLayoutPage(pPageName :string, pPage :LayoutPage) :number
   {
     let index = this._dataStore.findIndex(x => x.name == pPage.name);
     if (index > -1)
     {
       this._dataStore[index] = pPage;
       this._layoutPages$.next(this._dataStore);
-      console.log(`LayoutPageService.updateLayoutPage(): LayoutPage.name = '${pPage.name}' updated`);
+      console.log(`LayoutPageService.updateLayoutPage(): LayoutPages['${pPageName}'] updated`);
       
       return(index);
     }

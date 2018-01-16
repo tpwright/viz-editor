@@ -46,21 +46,23 @@ export class SettingsService {
   private loadSettingsFromCookie() :void
   {
     console.log(`SettingsService.loadSettingsFromCookie(): Begins`)
-    if (this._cookieService.get(this._settingsCookieKey))
+    let settingsObj = JSON.parse(this._cookieService.get(this._settingsCookieKey));
+
+    if (settingsObj)
     {
-      this._settings = new Settings();
-      
-      let settingsObj = JSON.parse(this._cookieService.get(this._settingsCookieKey));
       console.log(`SettingsService.loadSettingsFromCookie(): settingsObj = '${JSON.stringify(settingsObj)}'`)
-      settingsObj.array.forEach(setting =>
+        for (let ix = 0; ix < Object.entries(settingsObj).length; ix++)
         {
-          this._settings[setting.name] = setting .value;
-        });
+          let item = Object.entries(settingsObj)[ix];
+          this._settings[item[0]] = item[1];
+        };
+    
       console.log(`SettingsService.loadSettingsFromCookie(): this._settings loaded from cookie`);
     }
     else
     {
-      console.log(`SettingsService.loadSettingsFromCookie(): no cookie found`)
+      console.log(`SettingsService.loadSettingsFromCookie(): Settings cookie not found`)
+      // The current this._settings is assumed to contain the default settings
       this._cookieService.put(this._settingsCookieKey, JSON.stringify(this._settings));
       console.log(`SettingsService.loadSettingsFromCookie(): new cookie created`)
     }
@@ -68,6 +70,9 @@ export class SettingsService {
     console.log(`SettingsService.loadSettingsFromCookie(): Ends; this._settings ='${JSON.stringify(this._settings)}'`)
   }
 
+  /*
+   *  Restore Settings to their default values.
+   */
   public restoreDefaultSettings() :void
   {
     console.log(`SetingsService.restoreDefaultSettings(): Begins`);

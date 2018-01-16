@@ -4,7 +4,7 @@
 
 <div *ngFor='let item of settingsList'>
   <mat-form-field>
-        <input matInput placeholder={{item.name}} [(value)]="item.value">
+        <input matInput placeholder={{item.name}} [value]="item.value" (input)="item.value = $event.target.value" >
     </mat-form-field>    
   </div>
 </mat-dialog-content>
